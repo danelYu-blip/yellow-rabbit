@@ -122,6 +122,7 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .sz-filter-lbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-right:2px}
 .sz-f{flex-shrink:0;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;background:var(--s2);border:1px solid var(--b);color:var(--mu);cursor:pointer;transition:all .15s;line-height:1.4}
 .sz-f.active{background:var(--y);border-color:var(--y);color:#000}
+.sz-f.unavail{opacity:.35;text-decoration:line-through}
 .sz-f-clear{flex-shrink:0;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;background:transparent;border:1px solid var(--b);color:var(--mu);cursor:pointer;white-space:nowrap}
 </style>
 </head>
@@ -208,14 +209,12 @@ const SIZES_JEANS   = [26,27,28,29,30,31,32,33,34,36,38];
 const ALL_SIZES     = SIZES_SHOES; // используется для обуви
 
 function getSizeSet(cat, subcat, sizes){
-  if(cat==='accessories') return [];           // аксессуары — без размеров
+  if(cat==='accessories') return [];
   if(cat==='shoes')       return SIZES_SHOES;
   if(cat==='clothes'){
-    if(subcat==='jeans'){
-      // Определяем тип по сохранённым размерам: числа < 50 = numeric
-      if(sizes&&sizes.some(s=>typeof s==='number'&&s<50)) return SIZES_JEANS;
-      return SIZES_CLOTHES;
-    }
+    // Для любой одежды определяем тип по сохранённым размерам
+    // Если есть хоть одно число < 50 — числовой ряд, иначе буквенный
+    if(sizes&&sizes.some(s=>typeof s==='number'&&s<50)) return SIZES_JEANS;
     return SIZES_CLOTHES;
   }
   return SIZES_SHOES;
@@ -227,7 +226,7 @@ let SUBCATS = [{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'С
 try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
 
 let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
-let curCat='shoes', curSub='all', curStore='all', curSize=null;
+let curCat='shoes', curSub='all', curStore='all', curSizes=[];
 
 /* ── FIREBASE LISTENERS ── */
 onSnapshot(collection(db,'products'),{includeMetadataChanges:true}, snap=>{
@@ -261,7 +260,7 @@ function buildSubtabs(){
   ].join('');
   el.querySelectorAll('.subtab').forEach(btn=>btn.addEventListener('click',()=>{
     curSub=btn.dataset.sub;
-    curSize=null;
+    curSizes=[];
     el.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub===curSub));
     buildSzFilter();
     render();
@@ -275,36 +274,47 @@ function buildSzFilter(){
   // Аксессуары — без фильтра размеров
   if(curCat==='accessories'){ bar.classList.remove('show'); return; }
 
-  // Собираем все размеры реально имеющихся товаров в текущей категории/подкатегории
-  const visible=products.filter(p=>
+  // Полный размерный ряд для текущей категории/подкатегории
+  // Для джинс нужно определить тип по имеющимся товарам
+  const relevantProducts=products.filter(p=>
     p.cat===curCat &&
-    (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
-    (curStore==='all'||p.store===curStore) &&
-    p.sizes&&p.sizes.length
+    (curCat!=='clothes'||curSub==='all'||p.subcat===curSub)
+  );
+  const combinedSizes=relevantProducts.flatMap(p=>p.sizes||[]);
+  const fullSizeSet=getSizeSet(curCat, curSub==='all'?'':curSub, combinedSizes);
+
+  if(fullSizeSet.length===0){ bar.classList.remove('show'); return; }
+
+  // Какие размеры реально есть в наличии (с учётом фильтра магазина)
+  const inStock=new Set(
+    products.filter(p=>
+      p.cat===curCat &&
+      (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
+      (curStore==='all'||p.store===curStore) &&
+      p.sizes&&p.sizes.length
+    ).flatMap(p=>p.sizes||[])
   );
 
-  // Уникальные размеры отсортированные по правильному порядку
-  const sizeSet=getSizeSet(curCat, curSub==='all'?'':curSub,
-    visible.flatMap(p=>p.sizes||[]));
-  const allSizes=sizeSet.filter(s=>visible.some(p=>(p.sizes||[]).includes(s)));
-
-  if(allSizes.length===0){ bar.classList.remove('show'); return; }
-
   bar.classList.add('show');
-  row.innerHTML=`<span class="sz-filter-lbl">Размер:</span>`+
-    allSizes.map(s=>`<button class="sz-f${curSize===s?' active':''}" data-sz="${s}">${s}</button>`).join('')+
-    `<button class="sz-f-clear" id="szClear">✕ Все</button>`;
+  row.innerHTML=
+    `<span class="sz-filter-lbl">Размер:</span>`+
+    fullSizeSet.map(s=>{
+      const active=curSizes.includes(s);
+      const avail=inStock.has(s);
+      return `<button class="sz-f${active?' active':''}${!avail?' unavail':''}" data-sz="${s}">${s}</button>`;
+    }).join('')+
+    (curSizes.length>0 ? `<button class="sz-f-clear" id="szClear">✕ Сбросить</button>` : '');
 
   row.querySelectorAll('.sz-f').forEach(btn=>btn.addEventListener('click',()=>{
     const raw=btn.dataset.sz;
     const s=isNaN(raw)?raw:Number(raw);
-    curSize=curSize===s?null:s;
+    const i=curSizes.indexOf(s);
+    if(i>-1) curSizes.splice(i,1); else curSizes.push(s);
     buildSzFilter();
     render();
   }));
-  document.getElementById('szClear').addEventListener('click',()=>{
-    curSize=null; buildSzFilter(); render();
-  });
+  const clearBtn=document.getElementById('szClear');
+  if(clearBtn) clearBtn.addEventListener('click',()=>{ curSizes=[]; buildSzFilter(); render(); });
 }
 
 /* ── FILTER ── */
@@ -315,10 +325,10 @@ function filterProducts(){
     (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
     (curStore==='all'||p.store===curStore) &&
     (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q)) &&
-    // Только товары в наличии (есть хотя бы один размер)
+    // Только товары в наличии (аксессуары всегда показываем)
     (p.cat==='accessories' || (p.sizes&&p.sizes.length>0)) &&
-    // Фильтр по конкретному размеру
-    (curSize===null||(p.sizes&&p.sizes.includes(curSize)))
+    // Мультифильтр: товар должен иметь ХОТЯ БЫ ОДИН из выбранных размеров
+    (curSizes.length===0 || curSizes.some(s=>p.sizes&&p.sizes.includes(s)))
   );
 }
 
@@ -345,6 +355,11 @@ function render(){
   const f=filterProducts();
   if(!f.length&&products.length===0){
     grid.innerHTML=`<div class="empty"><div class="empty-ic">🐇</div><div class="empty-t">Каталог пуст</div><div class="empty-s">Скоро здесь появятся товары</div></div>`;
+    return;
+  }
+  if(!f.length&&curSizes.length>0){
+    const szLabel=curSizes.join(', ');
+    grid.innerHTML=`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">Нет в наличии</div><div class="empty-s">Размер ${szLabel} отсутствует в данной категории</div></div>`;
     return;
   }
   if(!f.length){
@@ -438,12 +453,12 @@ if(window.Telegram?.WebApp){
 /* ── EVENTS ── */
 document.getElementById('catTabs').addEventListener('click',e=>{
   if(!e.target.classList.contains('tab')) return;
-  curCat=e.target.dataset.cat; curSub='all'; curSize=null;
+  curCat=e.target.dataset.cat; curSub='all'; curSizes=[];
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===curCat));
   buildSubtabs(); buildSzFilter(); render();
 });
 document.getElementById('storeSelect').addEventListener('change',e=>{
-  curStore=e.target.value; curSize=null; buildSzFilter(); render();
+  curStore=e.target.value; curSizes=[]; buildSzFilter(); render();
 });
 document.getElementById('searchInput').addEventListener('input',render);
 
