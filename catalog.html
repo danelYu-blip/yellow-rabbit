@@ -15,10 +15,27 @@
   --tg-top: env(safe-area-inset-top, 0px);
 }
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;font-size:14px}
+body{font-family:'Onest',sans-serif;background:#000;color:var(--tx);min-height:100vh;overflow-x:hidden;font-size:14px}
+/* Ограничиваем ширину — каталог это мобильное приложение */
+#catalogPage,#detailPage{
+  max-width:480px;
+  margin:0 auto;
+  background:var(--bg);
+  min-height:100vh;
+  position:relative;
+}
+#detailPage{
+  position:fixed;
+  left:50%;
+  transform:translateX(calc(-50% + 100vw));
+  width:100%;
+}
+#detailPage.open{
+  transform:translateX(-50%);
+}
 
 /* HEADER */
-.hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:0 14px 10px;padding-top:var(--tg-top);position:sticky;top:0;z-index:100}
+.hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:0 14px 10px;padding-top:var(--tg-top);position:sticky;top:0;z-index:100;max-width:480px;}
 .hdr-inner{padding-top:10px}
 .hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
 .brand{display:flex;align-items:center;gap:10px}
@@ -88,12 +105,11 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 .empty-s{font-size:13px}
 
 /* DETAIL PAGE */
-.page{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;transform:translateX(100%);transition:transform .3s ease}
-.page.open{transform:translateX(0)}
+.page{position:fixed;top:0;bottom:0;width:100%;max-width:480px;background:var(--bg);z-index:200;overflow-y:auto;transition:transform .3s ease}
 .det-hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:0 14px 12px;padding-top:var(--tg-top);position:sticky;top:0;z-index:10}
 .det-hdr-inner{padding-top:10px}
 .det-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--y);line-height:1.1}
-.det-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--s2)}
+.det-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--s2);max-height:380px}
 .det-ph{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:80px}
 .det-body{padding:16px 14px 40px}
 .det-cat{font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:6px}
@@ -222,8 +238,8 @@ function getSizeSet(cat, subcat, sizes){
 
 // Подкатегории читаем из localStorage (синхронизированы с админкой на том же устройстве)
 // или используем дефолт
-let SUBCATS = [{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'Спорт. штаны'},{key:'jeans',label:'Джинсы'},{key:'outerwear',label:'Верхняя одежда'}];
-try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
+// Подкатегории загружаются из Firebase
+let SUBCATS = [];
 
 let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
 let curCat='shoes', curSub='all', curStore='all', curSizes=[];
@@ -241,6 +257,16 @@ onSnapshot(doc(db,'settings','stores'),{includeMetadataChanges:true}, snap=>{
   if(snap.exists()){ STORES=snap.data(); buildStoreSelect(); render(); }
 });
 
+// Подкатегории из Firebase
+onSnapshot(doc(db,'settings','subcats'),{includeMetadataChanges:true}, snap=>{
+  if(snap.metadata.fromCache) return;
+  if(snap.exists()&&snap.data().list){
+    SUBCATS=snap.data().list;
+    localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); // локальный кэш
+    buildSubtabs(); buildSzFilter(); render();
+  }
+});
+
 /* ── STORE SELECT ── */
 function buildStoreSelect(){
   const sel=document.getElementById('storeSelect');
@@ -253,7 +279,7 @@ function buildStoreSelect(){
 /* ── SUBTABS ── */
 function buildSubtabs(){
   const el=document.getElementById('subtabsEl');
-  if(curCat!=='clothes'){ el.classList.remove('show'); return; }
+  if(curCat!=='clothes'||SUBCATS.length===0){ el.classList.remove('show'); return; }
   el.classList.add('show');
   el.innerHTML=['<button class="subtab active" data-sub="all">Все</button>',
     ...SUBCATS.map(s=>`<button class="subtab${curSub===s.key?' active':''}" data-sub="${s.key}">${s.label}</button>`)
@@ -463,6 +489,8 @@ document.getElementById('storeSelect').addEventListener('change',e=>{
 document.getElementById('searchInput').addEventListener('input',render);
 
 /* ── INIT ── */
+// Быстрый старт из кэша пока Firebase не ответил
+try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
 buildSubtabs();
 buildSzFilter();
 </script>
