@@ -134,9 +134,29 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
 /* FAB */
-.fab{position:fixed;bottom:18px;right:14px;z-index:200}
+.fab{position:fixed;bottom:18px;right:14px;z-index:200;display:flex;flex-direction:column;align-items:flex-end;gap:8px}
 .fab-btn{display:flex;align-items:center;gap:8px;background:var(--y);color:#000;border:none;border-radius:50px;padding:13px 20px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(245,200,0,.35)}
 .fab-btn:active{transform:scale(.95)}
+.fab-btn.secondary{background:var(--s2);color:var(--tx);border:1px solid var(--b);box-shadow:none;font-size:12px;padding:10px 16px}
+
+/* COPY TO STORES MODAL */
+.copy-store-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--b)}
+.copy-store-row:last-child{border-bottom:none}
+.copy-store-name{font-size:14px;font-weight:500}
+.copy-sz-wrap{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.copy-sz-btn{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--s2);border:1px solid var(--b);color:var(--mu);cursor:pointer;transition:all .15s}
+.copy-sz-btn.on{background:var(--y);border-color:var(--y);color:#000}
+
+/* IMPORT */
+.import-drop{border:2px dashed var(--by);border-radius:var(--r);padding:24px;text-align:center;cursor:pointer;transition:border-color .2s;margin-bottom:12px}
+.import-drop:hover,.import-drop.over{border-color:var(--y);background:rgba(245,200,0,.05)}
+.import-preview{max-height:300px;overflow-y:auto;margin-top:12px}
+.import-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--b);font-size:12px}
+.import-row:last-child{border-bottom:none}
+.import-row-name{flex:1;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.import-tag{padding:2px 6px;border-radius:4px;font-size:10px;font-weight:700;background:rgba(61,220,132,.12);color:var(--gr);white-space:nowrap}
+.import-err{color:var(--re);font-size:12px}
+#csvFileInput{display:none}
 
 /* MODAL */
 .ovl{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(6px)}
@@ -302,7 +322,40 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
     <button class="bdanger" id="btnDeleteAll">🗑 Удалить все товары</button>
   </div>
 
-  <div class="fab" id="fab"><button class="fab-btn" id="btnAdd">＋ Добавить товар</button></div>
+  <div class="fab" id="fab">
+    <button class="fab-btn secondary" id="btnImport">📥 Импорт CSV</button>
+    <button class="fab-btn" id="btnAdd">＋ Добавить товар</button>
+  </div>
+</div>
+
+<!-- ══ COPY TO STORES MODAL ══ -->
+<div class="ovl" id="copyOvl">
+  <div class="modal">
+    <div class="modal-h"></div>
+    <div class="modal-t">Копировать в магазины</div>
+    <div id="copyProductName" style="font-size:13px;color:var(--mu);margin-bottom:16px"></div>
+    <div id="copyStoresList"></div>
+    <button class="bp" id="btnCopyConfirm">📋 Скопировать</button>
+    <button class="bs" id="btnCopyCancel">Отмена</button>
+  </div>
+</div>
+
+<!-- ══ IMPORT CSV MODAL ══ -->
+<div class="ovl" id="importOvl">
+  <div class="modal">
+    <div class="modal-h"></div>
+    <div class="modal-t">Импорт из CSV</div>
+    <div class="import-drop" id="importDrop">
+      <div style="font-size:32px;margin-bottom:8px">📄</div>
+      <div style="font-size:14px;font-weight:600;color:var(--tx)">Нажмите или перетащите CSV файл</div>
+      <div style="font-size:12px;color:var(--mu);margin-top:6px">Колонки: name, cat, subcat, price, store, sizes, img</div>
+      <button class="bp" style="width:auto;padding:10px 20px;margin-top:12px" id="btnDownloadTemplate">⬇ Скачать шаблон</button>
+    </div>
+    <input type="file" id="csvFileInput" accept=".csv,.txt">
+    <div id="importPreview"></div>
+    <button class="bp" id="btnImportConfirm" style="display:none">✅ Загрузить все товары</button>
+    <button class="bs" id="btnImportCancel">Закрыть</button>
+  </div>
 </div>
 
 <!-- ══ CONFIRM DIALOG — стоит ДО script, чтобы DOM был готов ══ -->
@@ -650,11 +703,13 @@ function renderProducts(){
         </div>
       </div>
       <div class="prow-acts">
+        <button class="bsm" style="background:rgba(42,171,238,.15);color:#2AABEE;border:1px solid rgba(42,171,238,.2)" data-copy="${p.id}" title="Копировать в другие магазины">📋</button>
         <button class="bsm b-edit" data-edit="${p.id}">✏️</button>
         <button class="bsm b-del" data-del="${p.id}">🗑</button>
       </div>
     </div>`;
   }).join('');
+  list.querySelectorAll('[data-copy]').forEach(btn=>btn.addEventListener('click',()=>openCopyModal(btn.dataset.copy)));
   list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>openEdit(btn.dataset.edit)));
   list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>showConfirm(
     'Удалить товар?','Товар будет удалён из каталога',
@@ -986,6 +1041,254 @@ document.getElementById('catFilter').addEventListener('click',e=>{
   curCat=e.target.dataset.cat;
   document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===curCat));
   renderProducts();
+});
+
+/* ══════════════════════════════════════
+   КОПИРОВАНИЕ В МАГАЗИНЫ
+══════════════════════════════════════ */
+let copySourceProduct = null;
+let copySizeSelections = {}; // {storeKey: Set of sizes}
+
+document.getElementById('btnCopyCancel').addEventListener('click', ()=>{ document.getElementById('copyOvl').classList.remove('open'); });
+document.getElementById('copyOvl').addEventListener('click', e=>{ if(e.target===e.currentTarget) document.getElementById('copyOvl').classList.remove('open'); });
+
+function openCopyModal(productId){
+  const p = products.find(x=>x.id===productId); if(!p) return;
+  copySourceProduct = p;
+  copySizeSelections = {};
+
+  document.getElementById('copyProductName').textContent = `Товар: ${p.name}`;
+
+  // Показываем все магазины КРОМЕ того где уже есть
+  const storeEntries = Object.entries(STORES).filter(([k])=>k!==p.store);
+  const SIZES_LIST = p.sizes&&p.sizes.length>0 ?
+    (typeof p.sizes[0]==='number' ? [36,37,38,39,40,41,42,43,44,45,46] : ['XS','S','M','L','XL','XXL','3XL'])
+    : [36,37,38,39,40,41,42,43,44,45,46];
+
+  storeEntries.forEach(([k])=>{ copySizeSelections[k] = new Set(); });
+
+  document.getElementById('copyStoresList').innerHTML = storeEntries.map(([k,v])=>`
+    <div style="padding:12px 0;border-bottom:1px solid var(--b)">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;flex:1">
+          <input type="checkbox" class="copy-store-chk" data-store="${k}" style="accent-color:var(--y);width:16px;height:16px">
+          <span style="font-size:14px;font-weight:600">📍 ${v}</span>
+        </label>
+      </div>
+      <div class="copy-sz-wrap" id="copySz-${k}">
+        ${SIZES_LIST.map(s=>`<button class="copy-sz-btn" data-store="${k}" data-sz="${s}">${s}</button>`).join('')}
+      </div>
+    </div>`).join('');
+
+  // Листенеры кнопок размеров
+  document.querySelectorAll('.copy-sz-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const store=btn.dataset.store, sz=isNaN(btn.dataset.sz)?btn.dataset.sz:Number(btn.dataset.sz);
+      if(copySizeSelections[store].has(sz)) copySizeSelections[store].delete(sz);
+      else copySizeSelections[store].add(sz);
+      btn.classList.toggle('on', copySizeSelections[store].has(sz));
+      // Автоматически ставим галочку магазина если выбран хоть 1 размер
+      const chk=document.querySelector(`.copy-store-chk[data-store="${store}"]`);
+      if(chk) chk.checked=copySizeSelections[store].size>0;
+    });
+  });
+
+  document.getElementById('copyOvl').classList.add('open');
+}
+
+document.getElementById('btnCopyConfirm').addEventListener('click', async()=>{
+  if(!copySourceProduct) return;
+  const btn=document.getElementById('btnCopyConfirm');
+  btn.textContent='Копирую...'; btn.disabled=true;
+
+  const promises=[];
+  document.querySelectorAll('.copy-store-chk:checked').forEach(chk=>{
+    const storeKey=chk.dataset.store;
+    const sizes=[...copySizeSelections[storeKey]].sort((a,b)=>{
+      if(typeof a==='number'&&typeof b==='number') return a-b;
+      const order=['XS','S','M','L','XL','XXL','3XL'];
+      return order.indexOf(a)-order.indexOf(b);
+    });
+    const newProduct={
+      ...copySourceProduct,
+      id: 'p_'+Date.now()+'_'+storeKey,
+      store: storeKey,
+      sizes,
+      createdAt: Date.now()
+    };
+    promises.push(setDoc(doc(db,'products',newProduct.id), newProduct));
+  });
+
+  await Promise.all(promises);
+  btn.textContent='📋 Скопировать'; btn.disabled=false;
+  document.getElementById('copyOvl').classList.remove('open');
+  toast(`✅ Скопировано в ${promises.length} магазин(а)`);
+});
+
+// Добавляем кнопку "копировать" в карточку товара — через делегирование
+// (вызывается из renderProducts)
+window.openCopyModal = openCopyModal;
+
+/* ══════════════════════════════════════
+   ИМПОРТ CSV
+══════════════════════════════════════ */
+let importedRows = [];
+
+document.getElementById('btnImport').addEventListener('click',()=>{ document.getElementById('importOvl').classList.add('open'); });
+document.getElementById('btnImportCancel').addEventListener('click',()=>{ document.getElementById('importOvl').classList.remove('open'); importedRows=[]; document.getElementById('importPreview').innerHTML=''; document.getElementById('btnImportConfirm').style.display='none'; });
+document.getElementById('importOvl').addEventListener('click',e=>{ if(e.target===e.currentTarget){ document.getElementById('importOvl').classList.remove('open'); } });
+
+// Скачать шаблон
+document.getElementById('btnDownloadTemplate').addEventListener('click',()=>{
+  const lines=[
+    'name,cat,subcat,price,store,sizes,img',
+    '# === ОБУВЬ (cat=shoes) ===',
+    'Nike Air Force 1 Low,shoes,,5690,1,"40,41,42,43,44",',
+    'Adidas Superstar,shoes,,4900,2,"36,37,38,39,40,41",',
+    'Nike Air Max 270,shoes,,6200,1,"42,43,44,45",',
+    '# === ОДЕЖДА — числовые размеры (subcat=jeans) ===',
+    'Джинсы Levi 501,clothes,jeans,3200,1,"28,30,32,34",',
+    '# === ОДЕЖДА — буквенные размеры ===',
+    'Костюм спортивный,clothes,suits,4500,3,"S,M,L,XL,XXL",',
+    'Пуховик зимний,clothes,outerwear,8500,1,"S,M,L",',
+    'Спортивные штаны Nike,clothes,sport_pants,2900,4,"XS,S,M,L,XL",',
+    '# === АКСЕССУАРЫ (sizes оставить пустым) ===',
+    'Рюкзак Nike,accessories,,,1,,',
+    'Очки солнечные,accessories,,,2,,',
+    '# ---',
+    '# cat: shoes / clothes / accessories',
+    '# subcat (только для clothes): suits / sport_pants / jeans / outerwear',
+    '# store: 1 / 2 / 3 / 4',
+    '# sizes: 40,41,42  или  S,M,L  (через запятую)',
+    '# img: ссылка на фото (можно оставить пустым)',
+  ];
+  const csv=lines.join('\n');
+  const a=document.createElement('a');
+  a.href='data:text/csv;charset=utf-8,\uFEFF'+encodeURIComponent(csv);
+  a.download='import_template.csv'; a.click();
+});
+
+// Drag & drop на зону импорта
+const importDrop=document.getElementById('importDrop');
+importDrop.addEventListener('dragover',e=>{ e.preventDefault(); importDrop.classList.add('over'); });
+importDrop.addEventListener('dragleave',()=>importDrop.classList.remove('over'));
+importDrop.addEventListener('drop',e=>{ e.preventDefault(); importDrop.classList.remove('over'); const f=e.dataTransfer.files[0]; if(f) parseCSV(f); });
+importDrop.addEventListener('click',()=>document.getElementById('csvFileInput').click());
+document.getElementById('csvFileInput').addEventListener('change',e=>{ const f=e.target.files[0]; if(f) parseCSV(f); });
+
+function parseCSV(file){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const text=e.target.result.replace(/^﻿/,''); // убираем BOM
+    const lines=text.split(/
+?
+/).filter(l=>l.trim());
+    if(!lines.length) return;
+
+    // Заголовок
+    const headers=lines[0].split(',').map(h=>h.trim().toLowerCase().replace(/"/g,''));
+    importedRows=[];
+    const errors=[];
+
+    for(let i=1;i<lines.length;i++){
+      // Парсим CSV правильно (учитываем кавычки)
+      const cols=parseCSVLine(lines[i]);
+      if(cols.length<2) continue;
+
+      const row={};
+      headers.forEach((h,idx)=>{ row[h]=(cols[idx]||'').trim(); });
+
+      // Валидация
+      if(!row.name){ errors.push(`Строка ${i+1}: нет названия`); continue; }
+      if(!['shoes','clothes','accessories'].includes(row.cat)){
+        errors.push(`Строка ${i+1}: неверная категория "${row.cat}" (shoes/clothes/accessories)`); continue;
+      }
+
+      // Парсим размеры: "40,41,42" или "40-44"
+      let sizes=[];
+      if(row.sizes){
+        const s=row.sizes.replace(/"/g,'').trim();
+        if(s.includes('-')&&!isNaN(s.split('-')[0])){
+          // Диапазон: 40-44
+          const [from,to]=s.split('-').map(Number);
+          for(let n=from;n<=to;n++) sizes.push(n);
+        } else {
+          // Список через запятую
+          sizes=s.split(',').map(x=>{
+            const v=x.trim();
+            return isNaN(v)?v:Number(v);
+          }).filter(Boolean);
+        }
+      }
+
+      importedRows.push({
+        name: row.name,
+        cat: row.cat,
+        subcat: row.subcat||'',
+        price: parseInt(row.price)||0,
+        store: row.store||'1',
+        sizes,
+        img: row.img||'',
+        id: 'p_'+Date.now()+'_'+i,
+        createdAt: Date.now()+i
+      });
+    }
+
+    // Показываем превью
+    const preview=document.getElementById('importPreview');
+    let html='<div style="margin-top:12px">';
+    if(errors.length) html+=errors.map(e=>`<div class="import-err">⚠ ${e}</div>`).join('');
+    if(importedRows.length){
+      html+=`<div style="font-size:12px;color:var(--mu);margin:8px 0">${importedRows.length} товаров готово к загрузке:</div>`;
+      html+='<div class="import-preview">'+importedRows.map(p=>`
+        <div class="import-row">
+          <div class="import-row-name">${p.name}</div>
+          <span class="import-tag">${{shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'}[p.cat]}</span>
+          <span style="font-size:11px;color:var(--mu)">Маг.${p.store}</span>
+          <span style="font-size:11px;color:var(--y)">${p.sizes.join(', ')||'—'}</span>
+        </div>`).join('')+'</div>';
+    }
+    html+='</div>';
+    preview.innerHTML=html;
+    document.getElementById('btnImportConfirm').style.display=importedRows.length?'block':'none';
+  };
+  reader.readAsText(file,'UTF-8');
+}
+
+function parseCSVLine(line){
+  const result=[]; let cur='', inQ=false;
+  for(let i=0;i<line.length;i++){
+    const c=line[i];
+    if(c==='"'){ inQ=!inQ; }
+    else if(c===','&&!inQ){ result.push(cur); cur=''; }
+    else cur+=c;
+  }
+  result.push(cur);
+  return result;
+}
+
+document.getElementById('btnImportConfirm').addEventListener('click', async()=>{
+  const btn=document.getElementById('btnImportConfirm');
+  btn.textContent='Загружаю...'; btn.disabled=true;
+
+  // Загружаем пачками по 500 (лимит Firestore batch)
+  const BATCH_SIZE=499;
+  for(let i=0;i<importedRows.length;i+=BATCH_SIZE){
+    const batch=writeBatch(db);
+    importedRows.slice(i,i+BATCH_SIZE).forEach(p=>{
+      // Уникальный ID чтобы не перезаписывать существующие
+      const id='p_'+Date.now()+'_'+Math.random().toString(36).slice(2,7);
+      batch.set(doc(db,'products',id),{...p,id});
+    });
+    await batch.commit();
+  }
+
+  btn.textContent='✅ Загрузить все товары'; btn.disabled=false;
+  document.getElementById('importOvl').classList.remove('open');
+  importedRows=[];
+  document.getElementById('importPreview').innerHTML='';
+  document.getElementById('btnImportConfirm').style.display='none';
+  toast(`✅ Импортировано ${importedRows.length||'все'} товаров`);
 });
 
 /* ── INIT ── */
