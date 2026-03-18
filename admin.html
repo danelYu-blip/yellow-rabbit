@@ -551,21 +551,47 @@ document.getElementById('btnAddSubcat').addEventListener('click',()=>{
 
 /* ── CONFIRM DIALOG ── */
 let _confCb=null;
+
+// Toast для отладки
+function toast(msg,color='#3DDC84'){
+  let t=document.getElementById('dbgToast');
+  if(!t){ t=document.createElement('div'); t.id='dbgToast';
+    Object.assign(t.style,{position:'fixed',bottom:'80px',left:'50%',transform:'translateX(-50%)',
+    background:'#222',border:'2px solid',borderRadius:'10px',padding:'10px 18px',
+    fontFamily:'Onest,sans-serif',fontSize:'13px',fontWeight:'600',zIndex:'9999',
+    maxWidth:'90vw',textAlign:'center',transition:'opacity .3s'});
+    document.body.appendChild(t);
+  }
+  t.textContent=msg; t.style.borderColor=color; t.style.color=color; t.style.opacity='1';
+  clearTimeout(t._to); t._to=setTimeout(()=>t.style.opacity='0',3000);
+}
+
 function showConfirm(title,text,cb){
   document.getElementById('confTitle').textContent=title;
   document.getElementById('confText').textContent=text;
   _confCb=cb;
   document.getElementById('confOvl').classList.add('open');
+  toast('Диалог открыт','#F5C800');
 }
 function closeConfirm(){
   document.getElementById('confOvl').classList.remove('open');
   _confCb=null;
 }
-// Кнопка ДА — вызывает callback, который уже содержит Firebase-вызов из замыкания
-document.getElementById('confYes').addEventListener('click',()=>{
+document.getElementById('confYes').addEventListener('click', async ()=>{
+  toast('Кнопка нажата — выполняю...','#F5C800');
   const cb=_confCb;
   closeConfirm();
-  if(cb) cb();
+  if(cb){
+    try{
+      await cb();
+      toast('✅ Удалено успешно','#3DDC84');
+    } catch(e){
+      toast('❌ Ошибка: '+e.message,'#FF4444');
+      console.error('Delete error:',e);
+    }
+  } else {
+    toast('❌ cb пустой!','#FF4444');
+  }
 });
 document.getElementById('confNo').addEventListener('click', closeConfirm);
 
