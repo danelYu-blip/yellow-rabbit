@@ -170,6 +170,16 @@
   ::-webkit-scrollbar{width:3px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+
+  /* Confirm dialog */
+  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
+  .confirm-overlay.open{display:flex}
+  .confirm-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--danger);border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center}
+  .confirm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--danger);margin-bottom:8px}
+  .confirm-text{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
+  .confirm-btns{display:flex;gap:10px}
+  .confirm-yes{flex:1;background:var(--danger);color:#fff;border:none;border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+  .confirm-no{flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -283,7 +293,7 @@
       </div>
     </div>
 
-    <button class="btn-danger-full" onclick="if(confirm('Удалить ВСЕ товары?')){deleteAllProducts()}">🗑 Удалить все товары</button>
+    <button class="btn-danger-full" onclick="askConfirm('Удалить все товары?','Это удалит весь каталог без возможности восстановления',deleteAllProducts)">🗑 Удалить все товары</button>
   </div>
 
   <div class="fab" id="fab">
@@ -602,7 +612,7 @@ async function saveProduct(){
   await setDoc(doc(db,'products',String(id)),productData);
 }
 
-async function delProduct(id){ if(!confirm('Удалить товар?')) return; await deleteDoc(doc(db,'products',String(id))); }
+async function delProduct(id){ askConfirm('Удалить товар?','Товар будет удалён из каталога', async ()=>{ await deleteDoc(doc(db,'products',String(id))); }); }
 async function deleteAllProducts(){ const snap=await getDocs(collection(db,'products')); const batch=writeBatch(db); snap.docs.forEach(d=>batch.delete(d.ref)); await batch.commit(); }
 
 window.openModal=openModal; window.openEdit=openEdit; window.closeModal=closeModal;
@@ -727,5 +737,16 @@ if(sessionStorage.getItem('yk_auth')==='1'){
   setFbStatus('pulse','Ожидание входа...');
 }
 </script>
+<!-- Confirm dialog -->
+<div class="confirm-overlay" id="confirmOverlay">
+  <div class="confirm-box">
+    <div class="confirm-title" id="confirmTitle">Удалить?</div>
+    <div class="confirm-text" id="confirmText">Это действие нельзя отменить</div>
+    <div class="confirm-btns">
+      <button class="confirm-yes" id="confirmYes">Удалить</button>
+      <button class="confirm-no" onclick="closeConfirm()">Отмена</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
