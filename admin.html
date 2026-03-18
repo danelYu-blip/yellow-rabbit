@@ -293,7 +293,7 @@
       </div>
     </div>
 
-    <button class="btn-danger-full" onclick="askConfirm('Удалить все товары?','Это удалит весь каталог без возможности восстановления',deleteAllProducts)">🗑 Удалить все товары</button>
+    <button class="btn-danger-full" id="btnDeleteAll">🗑 Удалить все товары</button>
   </div>
 
   <div class="fab" id="fab">
@@ -612,11 +612,53 @@ async function saveProduct(){
   await setDoc(doc(db,'products',String(id)),productData);
 }
 
-async function delProduct(id){ askConfirm('Удалить товар?','Товар будет удалён из каталога', async ()=>{ await deleteDoc(doc(db,'products',String(id))); }); }
-async function deleteAllProducts(){ const snap=await getDocs(collection(db,'products')); const batch=writeBatch(db); snap.docs.forEach(d=>batch.delete(d.ref)); await batch.commit(); }
+async function _doDeleteProduct(id){
+  try {
+    await deleteDoc(doc(db,'products',String(id)));
+    console.log('deleted', id);
+  } catch(e){ console.error('delete error', e); alert('Ошибка удаления: '+e.message); }
+}
+async function _doDeleteAll(){
+  try {
+    const snap = await getDocs(collection(db,'products'));
+    const batch = writeBatch(db);
+    snap.docs.forEach(d => batch.delete(d.ref));
+    await batch.commit();
+    console.log('all deleted');
+  } catch(e){ console.error('deleteAll error', e); alert('Ошибка: '+e.message); }
+}
 
 window.openModal=openModal; window.openEdit=openEdit; window.closeModal=closeModal;
-window.saveProduct=saveProduct; window.delProduct=delProduct; window.deleteAllProducts=deleteAllProducts;
+window.saveProduct=saveProduct;
+
+// delProduct — показывает диалог, затем удаляет
+window.delProduct = function(id){
+  window._pendingDeleteId = id;
+  document.getElementById('confirmTitle').textContent = 'Удалить товар?';
+  document.getElementById('confirmText').textContent  = 'Товар будет удалён из каталога';
+  document.getElementById('confirmOverlay').classList.add('open');
+};
+
+// привязываем кнопки диалога напрямую к Firebase-функциям
+document.getElementById('confirmYes').addEventListener('click', async ()=>{
+  document.getElementById('confirmOverlay').classList.remove('open');
+  if(window._pendingDeleteAll){
+    window._pendingDeleteAll = false;
+    await _doDeleteAll();
+  } else if(window._pendingDeleteId){
+    const id = window._pendingDeleteId;
+    window._pendingDeleteId = null;
+    await _doDeleteProduct(id);
+  }
+});
+
+document.getElementById('btnDeleteAll').addEventListener('click', ()=>{
+  window._pendingDeleteAll = true;
+  window._pendingDeleteId  = null;
+  document.getElementById('confirmTitle').textContent = 'Удалить все товары?';
+  document.getElementById('confirmText').textContent  = 'Весь каталог будет удалён без возможности восстановления';
+  document.getElementById('confirmOverlay').classList.add('open');
+});
 
 // SUBCAT в модалке
 function updateSubcatOptions(){
@@ -737,25 +779,12 @@ if(sessionStorage.getItem('yk_auth')==='1'){
   setFbStatus('pulse','Ожидание входа...');
 }
 
-// ── CONFIRM DIALOG ──
-let _confirmCb = null;
-
-function askConfirm(title, text, cb){
-  document.getElementById('confirmTitle').textContent = title;
-  document.getElementById('confirmText').textContent  = text;
-  _confirmCb = cb;
-  document.getElementById('confirmOverlay').classList.add('open');
-}
+// closeConfirm для кнопки Отмена
 function closeConfirm(){
   document.getElementById('confirmOverlay').classList.remove('open');
-  _confirmCb = null;
+  window._pendingDeleteId  = null;
+  window._pendingDeleteAll = false;
 }
-document.getElementById('confirmYes').addEventListener('click', ()=>{
-  const cb = _confirmCb;   // сохраняем ДО закрытия
-  closeConfirm();
-  if(cb) cb();
-});
-window.askConfirm   = askConfirm;
 window.closeConfirm = closeConfirm;
 </script>
 <!-- Confirm dialog -->
