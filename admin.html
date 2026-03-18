@@ -549,31 +549,37 @@ document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==
 document.getElementById('loginInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 
+// Дефолтные данные — используются ТОЛЬКО если в Firebase нет документа credentials
+const FALLBACK_LOGIN = 'EasyShop39!';
+const FALLBACK_PASS  = 'Xk#7m2@Pq9!';
+
 async function doLogin(){
-  // Показываем индикатор загрузки
   const btn=document.getElementById('btnLogin');
   btn.textContent='Проверка...'; btn.disabled=true;
 
   await loadCredsFromFB();
-  const creds=getCreds();
-  const l=document.getElementById('loginInput').value.trim();
-  const p=document.getElementById('passInput').value;
+  const creds = getCreds();
+  const l = document.getElementById('loginInput').value.trim();
+  const p = document.getElementById('passInput').value;
 
   btn.textContent='Войти'; btn.disabled=false;
 
-  if(!creds){
-    document.getElementById('loginErr').textContent='Ошибка подключения к серверу. Проверьте интернет.';
-    document.getElementById('loginErr').style.display='block';
-    return;
-  }
+  // Проверяем: Firebase/localStorage → если нет, дефолтные
+  const validLogin = creds
+    ? (l===creds.login && p===creds.pass)
+    : (l===FALLBACK_LOGIN && p===FALLBACK_PASS);
 
-  if(l===creds.login && p===creds.pass){
+  if(validLogin){
+    // Если вошли по дефолтным — сохраняем их в Firebase чтобы потом можно было сменить
+    if(!creds) await saveCredsToFB(FALLBACK_LOGIN, FALLBACK_PASS);
+
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').style.display='block';
     sessionStorage.setItem('yk_auth','1');
     fillAddr(); rebuildDropdowns(); renderSubcats(); startListeners();
   } else {
     document.getElementById('loginErr').style.display='block';
+    document.getElementById('loginErr').textContent='Неверный логин или пароль';
     document.getElementById('passInput').value='';
   }
 }
