@@ -113,6 +113,16 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 ::-webkit-scrollbar{width:3px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
+
+/* SIZE FILTER BAR */
+.sz-filter-bar{padding:8px 10px;background:var(--bg);border-bottom:1px solid var(--b);display:none}
+.sz-filter-bar.show{display:block}
+.sz-filter-row{display:flex;gap:5px;overflow-x:auto;scrollbar-width:none;align-items:center}
+.sz-filter-row::-webkit-scrollbar{display:none}
+.sz-filter-lbl{font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.5px;white-space:nowrap;flex-shrink:0;margin-right:2px}
+.sz-f{flex-shrink:0;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;background:var(--s2);border:1px solid var(--b);color:var(--mu);cursor:pointer;transition:all .15s;line-height:1.4}
+.sz-f.active{background:var(--y);border-color:var(--y);color:#000}
+.sz-f-clear{flex-shrink:0;padding:4px 9px;border-radius:6px;font-size:10px;font-weight:700;background:transparent;border:1px solid var(--b);color:var(--mu);cursor:pointer;white-space:nowrap}
 </style>
 </head>
 <body>
@@ -138,6 +148,13 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
   </div>
 
   <div class="subtabs" id="subtabsEl"></div>
+
+  <!-- Фильтр по размеру -->
+  <div class="sz-filter-bar" id="szFilterBar">
+    <div class="sz-filter-row" id="szFilterRow">
+      <span class="sz-filter-lbl">Размер:</span>
+    </div>
+  </div>
 
   <div class="store-bar">
     <div class="sw">
@@ -185,7 +202,24 @@ const db = getFirestore(initializeApp(FB));
 
 const CAT  = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
 const ICON = {shoes:'👟',clothes:'👕',accessories:'👜'};
-const ALL_SIZES = [36,37,38,39,40,41,42,43,44,45,46];
+const SIZES_SHOES   = [36,37,38,39,40,41,42,43,44,45,46];
+const SIZES_CLOTHES = ['XS','S','M','L','XL','XXL','3XL'];
+const SIZES_JEANS   = [26,27,28,29,30,31,32,33,34,36,38];
+const ALL_SIZES     = SIZES_SHOES; // используется для обуви
+
+function getSizeSet(cat, subcat, sizes){
+  if(cat==='accessories') return [];           // аксессуары — без размеров
+  if(cat==='shoes')       return SIZES_SHOES;
+  if(cat==='clothes'){
+    if(subcat==='jeans'){
+      // Определяем тип по сохранённым размерам: числа < 50 = numeric
+      if(sizes&&sizes.some(s=>typeof s==='number'&&s<50)) return SIZES_JEANS;
+      return SIZES_CLOTHES;
+    }
+    return SIZES_CLOTHES;
+  }
+  return SIZES_SHOES;
+}
 
 // Подкатегории читаем из localStorage (синхронизированы с админкой на том же устройстве)
 // или используем дефолт
@@ -193,13 +227,14 @@ let SUBCATS = [{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'С
 try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
 
 let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
-let curCat='shoes', curSub='all', curStore='all';
+let curCat='shoes', curSub='all', curStore='all', curSize=null;
 
 /* ── FIREBASE LISTENERS ── */
 onSnapshot(collection(db,'products'),{includeMetadataChanges:true}, snap=>{
   if(snap.metadata.fromCache) return;
   products=snap.docs.map(d=>({id:d.id,...d.data()}));
   products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  buildSzFilter();
   render();
 });
 onSnapshot(doc(db,'settings','stores'),{includeMetadataChanges:true}, snap=>{
@@ -226,9 +261,50 @@ function buildSubtabs(){
   ].join('');
   el.querySelectorAll('.subtab').forEach(btn=>btn.addEventListener('click',()=>{
     curSub=btn.dataset.sub;
+    curSize=null;
     el.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub===curSub));
+    buildSzFilter();
     render();
   }));
+}
+
+function buildSzFilter(){
+  const bar=document.getElementById('szFilterBar');
+  const row=document.getElementById('szFilterRow');
+
+  // Аксессуары — без фильтра размеров
+  if(curCat==='accessories'){ bar.classList.remove('show'); return; }
+
+  // Собираем все размеры реально имеющихся товаров в текущей категории/подкатегории
+  const visible=products.filter(p=>
+    p.cat===curCat &&
+    (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
+    (curStore==='all'||p.store===curStore) &&
+    p.sizes&&p.sizes.length
+  );
+
+  // Уникальные размеры отсортированные по правильному порядку
+  const sizeSet=getSizeSet(curCat, curSub==='all'?'':curSub,
+    visible.flatMap(p=>p.sizes||[]));
+  const allSizes=sizeSet.filter(s=>visible.some(p=>(p.sizes||[]).includes(s)));
+
+  if(allSizes.length===0){ bar.classList.remove('show'); return; }
+
+  bar.classList.add('show');
+  row.innerHTML=`<span class="sz-filter-lbl">Размер:</span>`+
+    allSizes.map(s=>`<button class="sz-f${curSize===s?' active':''}" data-sz="${s}">${s}</button>`).join('')+
+    `<button class="sz-f-clear" id="szClear">✕ Все</button>`;
+
+  row.querySelectorAll('.sz-f').forEach(btn=>btn.addEventListener('click',()=>{
+    const raw=btn.dataset.sz;
+    const s=isNaN(raw)?raw:Number(raw);
+    curSize=curSize===s?null:s;
+    buildSzFilter();
+    render();
+  }));
+  document.getElementById('szClear').addEventListener('click',()=>{
+    curSize=null; buildSzFilter(); render();
+  });
 }
 
 /* ── FILTER ── */
@@ -238,7 +314,11 @@ function filterProducts(){
     p.cat===curCat &&
     (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
     (curStore==='all'||p.store===curStore) &&
-    (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q))
+    (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q)) &&
+    // Только товары в наличии (есть хотя бы один размер)
+    (p.cat==='accessories' || (p.sizes&&p.sizes.length>0)) &&
+    // Фильтр по конкретному размеру
+    (curSize===null||(p.sizes&&p.sizes.includes(curSize)))
   );
 }
 
@@ -314,7 +394,10 @@ function openDetail(id){
       <div class="det-price">${Number(p.price).toLocaleString('ru')} ₽</div>
       ${p.desc?`<div class="det-desc">${p.desc}</div>`:''}
       <div class="det-sec">Размеры</div>
-      <div class="det-sizes">${ALL_SIZES.map(s=>`<span class="det-sz${(p.sizes||[]).includes(s)?' in':''}">${s}</span>`).join('')}</div>
+      ${getSizeSet(p.cat,p.subcat,p.sizes).length===0
+        ? ''
+        : `<div class="det-sizes">${getSizeSet(p.cat,p.subcat,p.sizes).map(s=>`<span class="det-sz${(p.sizes||[]).includes(s)?' in':''}">${s}</span>`).join('')}</div>`
+      }
       <div class="det-sec">Наличие по магазинам</div>
       <div class="stores-list">${storesHtml}</div>
     </div>`;
@@ -355,15 +438,18 @@ if(window.Telegram?.WebApp){
 /* ── EVENTS ── */
 document.getElementById('catTabs').addEventListener('click',e=>{
   if(!e.target.classList.contains('tab')) return;
-  curCat=e.target.dataset.cat; curSub='all';
+  curCat=e.target.dataset.cat; curSub='all'; curSize=null;
   document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===curCat));
-  buildSubtabs(); render();
+  buildSubtabs(); buildSzFilter(); render();
 });
-document.getElementById('storeSelect').addEventListener('change',e=>{ curStore=e.target.value; render(); });
+document.getElementById('storeSelect').addEventListener('change',e=>{
+  curStore=e.target.value; curSize=null; buildSzFilter(); render();
+});
 document.getElementById('searchInput').addEventListener('input',render);
 
 /* ── INIT ── */
 buildSubtabs();
+buildSzFilter();
 </script>
 </body>
 </html>

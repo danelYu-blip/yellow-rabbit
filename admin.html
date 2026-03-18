@@ -330,6 +330,14 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
       <label class="fl">Подкатегория одежды</label>
       <select class="fs" id="fSubcat"></select>
     </div>
+    <!-- Тип размеров для джинс -->
+    <div class="fg" id="jeanTypeGroup" style="display:none">
+      <label class="fl">Тип размеров джинс</label>
+      <div style="display:flex;gap:8px">
+        <button type="button" class="sz-btn active" id="jeanTypeLetters" style="flex:1;padding:10px 4px">XS – 3XL</button>
+        <button type="button" class="sz-btn" id="jeanTypeNumeric" style="flex:1;padding:10px 4px">26 – 38</button>
+      </div>
+    </div>
     <div class="fg"><label class="fl">Магазин</label><select class="fs" id="fStore"></select></div>
     <div class="fg"><label class="fl">Описание</label><textarea class="fta" id="fDesc" placeholder="Краткое описание..."></textarea></div>
     <div class="fg">
@@ -381,13 +389,29 @@ const db = getFirestore(initializeApp(FB));
 /* ── CONSTANTS ── */
 const CAT  = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
 const ICON = {shoes:'👟',clothes:'👕',accessories:'👜'};
-const SIZES= [36,37,38,39,40,41,42,43,44,45,46];
+// Размеры по типу товара
+const SIZES_SHOES    = [36,37,38,39,40,41,42,43,44,45,46];
+const SIZES_CLOTHES  = ['XS','S','M','L','XL','XXL','3XL'];
+const SIZES_JEANS    = [26,27,28,29,30,31,32,33,34,36,38];
+const SIZES_OUTER    = ['XS','S','M','L','XL','XXL','3XL'];
+// Дефолт для обуви и аксессуаров
+const SIZES = SIZES_SHOES;
+
+function getSizesByContext(cat, subcat, jeanType){
+  if(cat==='accessories') return [];          // аксессуары — без размеров
+  if(cat==='shoes')       return SIZES_SHOES;
+  if(cat==='clothes'){
+    if(subcat==='jeans') return jeanType==='numeric' ? SIZES_JEANS : SIZES_CLOTHES;
+    return SIZES_CLOTHES;
+  }
+  return SIZES_SHOES;
+}
 const D_LOGIN='EasyShop39!', D_PASS='Xk#7m2@Pq9!';
 
 /* ── STATE ── */
 let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
 let SUBCATS=[{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'Спорт. штаны'},{key:'jeans',label:'Джинсы'},{key:'outerwear',label:'Верхняя одежда'}];
-let curCat='shoes', editId=null, imgMode='url', upData=null, selImg=null, selSizes=[];
+let curCat='shoes', editId=null, imgMode='url', upData=null, selImg=null, selSizes=[], jeanType='letters';
 let unsubP=null, unsubS=null;
 
 /* ── CREDENTIALS ── */
@@ -617,6 +641,22 @@ document.getElementById('btnCancel').addEventListener('click', closeModal);
 document.getElementById('btnSave').addEventListener('click', saveProduct);
 document.getElementById('addOvl').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 document.getElementById('fCat').addEventListener('change', updateSubcatSelect);
+document.getElementById('fSubcat').addEventListener('change', ()=>{
+  updateJeanTypeGroup();
+  buildSizeGrid([]);
+});
+document.getElementById('jeanTypeLetters').addEventListener('click',()=>{
+  jeanType='letters';
+  document.getElementById('jeanTypeLetters').classList.add('active');
+  document.getElementById('jeanTypeNumeric').classList.remove('active');
+  buildSizeGrid([]);
+});
+document.getElementById('jeanTypeNumeric').addEventListener('click',()=>{
+  jeanType='numeric';
+  document.getElementById('jeanTypeNumeric').classList.add('active');
+  document.getElementById('jeanTypeLetters').classList.remove('active');
+  buildSizeGrid([]);
+});
 
 function openModal(){
   editId=null;
@@ -627,6 +667,11 @@ function openModal(){
   document.getElementById('fDesc').value='';
   document.getElementById('subcatGroup').style.display='none';
   if(document.getElementById('fStore').options.length>0) document.getElementById('fStore').selectedIndex=0;
+  jeanType='letters';
+  document.getElementById('jeanTypeLetters').classList.add('active');
+  document.getElementById('jeanTypeNumeric').classList.remove('active');
+  document.getElementById('jeanTypeGroup').style.display='none';
+  document.getElementById('sizeGrid').parentElement.style.display='block';
   buildSizeGrid([]);
   resetImg();
   switchImg('url');
@@ -644,6 +689,14 @@ function openEdit(id){
   document.getElementById('fStore').value=p.store;
   updateSubcatSelect();
   document.getElementById('fSubcat').value=p.subcat||'';
+  // Определяем тип размеров джинс по сохранённым данным
+  if(p.cat==='clothes'&&p.subcat==='jeans'){
+    const hasNumeric=p.sizes&&p.sizes.some(s=>typeof s==='number'&&s<50);
+    jeanType=hasNumeric?'numeric':'letters';
+    document.getElementById('jeanTypeLetters').classList.toggle('active',jeanType==='letters');
+    document.getElementById('jeanTypeNumeric').classList.toggle('active',jeanType==='numeric');
+  }
+  updateJeanTypeGroup();
   buildSizeGrid(p.sizes||[]);
   resetImg();
   if(p.img&&p.img.startsWith('data:')){
@@ -676,7 +729,12 @@ async function saveProduct(){
   closeModal();
   await setDoc(doc(db,'products',String(id)),{
     id,name,cat,subcat,price,store,
-    sizes:[...selSizes].sort((a,b)=>a-b),
+    sizes:(()=>{
+      const cat=document.getElementById('fCat').value;
+      const sub=cat==='clothes'?document.getElementById('fSubcat').value:'';
+      const order=getSizesByContext(cat,sub,jeanType);
+      return [...selSizes].sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+    })(),
     desc,img,
     createdAt:existing?.createdAt||Date.now()
   });
@@ -684,17 +742,28 @@ async function saveProduct(){
 
 /* ── SIZE GRID ── */
 function buildSizeGrid(active=[]){
-  selSizes=[...active];
-  document.getElementById('sizeGrid').innerHTML=SIZES.map(s=>
+  const cat    = document.getElementById('fCat').value;
+  const subcat = document.getElementById('fSubcat').value;
+  const sizes  = getSizesByContext(cat, subcat, jeanType);
+  // Аксессуары — без размеров
+  if(sizes.length===0){ selSizes=[]; return; }
+  selSizes = [...active];
+
+  document.getElementById('sizeGrid').innerHTML = sizes.map(s=>
     `<button type="button" class="sz-btn${selSizes.includes(s)?' active':''}" data-sz="${s}">${s}</button>`
   ).join('');
+
   document.getElementById('sizeGrid').querySelectorAll('.sz-btn').forEach(btn=>
     btn.addEventListener('click',()=>{
-      const s=Number(btn.dataset.sz);
-      const i=selSizes.indexOf(s);
+      // Размер может быть строкой ('XS') или числом (36)
+      const raw = btn.dataset.sz;
+      const s   = isNaN(raw) ? raw : Number(raw);
+      const i   = selSizes.indexOf(s);
       if(i>-1) selSizes.splice(i,1); else selSizes.push(s);
-      selSizes.sort((a,b)=>a-b);
-      btn.classList.toggle('active',selSizes.includes(s));
+      // Сортируем: числа по возрастанию, строки в порядке SIZES_CLOTHES
+      const order = getSizesByContext(cat,subcat);
+      selSizes.sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+      btn.classList.toggle('active', selSizes.includes(s));
     })
   );
 }
@@ -702,10 +771,22 @@ function buildSizeGrid(active=[]){
 /* ── SUBCAT SELECT ── */
 function updateSubcatSelect(){
   const cat=document.getElementById('fCat').value;
+  const subcat=document.getElementById('fSubcat').value;
   document.getElementById('subcatGroup').style.display=cat==='clothes'?'block':'none';
   document.getElementById('fSubcat').innerHTML=
     '<option value="">— Без подкатегории —</option>'+
     SUBCATS.map(s=>`<option value="${s.key}">${s.label}</option>`).join('');
+  updateJeanTypeGroup();
+  buildSizeGrid([]);
+}
+
+function updateJeanTypeGroup(){
+  const cat=document.getElementById('fCat').value;
+  const subcat=document.getElementById('fSubcat').value;
+  const isJeans=cat==='clothes'&&subcat==='jeans';
+  const isAcc=cat==='accessories';
+  document.getElementById('jeanTypeGroup').style.display=isJeans?'block':'none';
+  document.getElementById('sizeGrid').parentElement.style.display=isAcc?'none':'block';
 }
 
 /* ── IMG ── */
