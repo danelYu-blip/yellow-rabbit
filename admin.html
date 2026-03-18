@@ -5,484 +5,471 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>Жёлтый Кролик — Админ</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;500;600;700&display=swap');
-  :root{--yellow:#F5C800;--yellow-soft:rgba(245,200,0,0.10);--black:#0A0A0A;--surface:#141414;--surface2:#1E1E1E;--border:#2A2A2A;--border-y:rgba(245,200,0,0.25);--text:#F5F5F0;--muted:#777;--danger:#FF4444;--success:#3DDC84;--radius:12px;--radius-sm:8px}
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:'Onest',sans-serif;background:var(--black);color:var(--text);min-height:100vh;font-size:14px}
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;500;600;700&display=swap');
+:root{
+  --y:#F5C800; --ys:rgba(245,200,0,.10);
+  --bg:#0A0A0A; --s1:#141414; --s2:#1E1E1E;
+  --b:#2A2A2A; --by:rgba(245,200,0,.25);
+  --tx:#F5F5F0; --mu:#777; --re:#FF4444; --gr:#3DDC84;
+  --r:12px; --rs:8px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;font-size:14px}
 
-  /* LOGIN */
-  .login-screen{position:fixed;inset:0;background:var(--black);display:flex;align-items:center;justify-content:center;z-index:999;padding:24px}
-  .login-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--yellow);border-radius:18px;padding:36px 28px;width:100%;max-width:380px}
-  .login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
-  .logo-box{background:var(--yellow);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .login-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--yellow)}
-  .login-sub{font-size:11px;color:var(--muted);margin-top:2px}
-  .login-heading{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--text);margin-bottom:6px}
-  .login-desc{font-size:13px;color:var(--muted);margin-bottom:24px}
-  .form-group{margin-bottom:14px}
-  .form-label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
-  .form-input{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:14px;padding:11px 12px;outline:none;transition:border-color .2s}
-  .form-input:focus{border-color:var(--yellow)}
-  .btn-login{width:100%;background:var(--yellow);color:#000;border:none;border-radius:var(--radius-sm);padding:14px;font-family:'Onest',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px;transition:opacity .2s}
-  .btn-login:active{opacity:.85}
-  .login-error{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.3);border-radius:var(--radius-sm);padding:10px 14px;font-size:13px;color:var(--danger);margin-top:12px;display:none;text-align:center}
+/* LOGIN */
+.login-screen{position:fixed;inset:0;background:var(--bg);display:flex;align-items:center;justify-content:center;z-index:999;padding:24px}
+.login-box{background:var(--s1);border:1px solid var(--b);border-top:3px solid var(--y);border-radius:18px;padding:36px 28px;width:100%;max-width:380px}
+.login-logo{display:flex;align-items:center;gap:12px;margin-bottom:28px}
+.logo-b{background:var(--y);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.login-ttl{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--y)}
+.login-sub{font-size:11px;color:var(--mu);margin-top:2px}
+.login-h{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--tx);margin-bottom:6px}
+.login-d{font-size:13px;color:var(--mu);margin-bottom:24px}
+.fg{margin-bottom:14px}
+.fl{display:block;font-size:10px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-bottom:6px}
+.fi{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:14px;padding:11px 12px;outline:none;transition:border-color .2s}
+.fi:focus{border-color:var(--y)}
+.btn-login{width:100%;background:var(--y);color:#000;border:none;border-radius:var(--rs);padding:14px;font-family:'Onest',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:4px}
+.btn-login:active{opacity:.85}
+.login-err{background:rgba(255,68,68,.1);border:1px solid rgba(255,68,68,.3);border-radius:var(--rs);padding:10px 14px;font-size:13px;color:var(--re);margin-top:12px;display:none;text-align:center}
 
-  /* APP */
-  .app{display:none}
-  .header{background:var(--black);border-bottom:2px solid var(--yellow);padding:12px 14px 10px;position:sticky;top:0;z-index:100}
-  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .brand-name{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--yellow);line-height:1}
-  .brand-sub{font-size:10px;color:var(--muted);letter-spacing:.5px;font-weight:500;text-transform:uppercase;margin-top:2px}
-  .admin-badge{background:var(--yellow);color:#000;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
-  .header-btns{display:flex;gap:7px}
-  .btn-icon{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .15s}
-  .btn-icon:hover{border-color:var(--yellow)}
-  .nav-tabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
-  .nav-tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
-  .nav-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
-  .section{display:none;padding:14px 12px 90px}
-  .section.active{display:block}
+/* APP */
+.app{display:none}
+.hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:12px 14px 10px;position:sticky;top:0;z-index:100}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.brand{display:flex;align-items:center;gap:10px}
+.brand-n{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--y);line-height:1}
+.brand-s{font-size:10px;color:var(--mu);letter-spacing:.5px;font-weight:500;text-transform:uppercase;margin-top:2px}
+.badge{background:var(--y);color:#000;font-size:10px;font-weight:700;padding:3px 8px;border-radius:6px}
+.icon-btn{background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px}
+.icon-btn:hover{border-color:var(--y)}
+.nav-tabs{display:flex;border-bottom:1px solid var(--b)}
+.nav-tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--mu);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
+.nav-tab.active{color:var(--y);border-bottom-color:var(--y)}
+.sec{display:none;padding:14px 12px 90px}
+.sec.active{display:block}
 
-  /* STATS */
-  .stats-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
-  .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 12px;text-align:center}
-  .stat-val{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--yellow)}
-  .stat-label{font-size:10px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px}
+.stat{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:14px 12px;text-align:center}
+.stat-v{font-family:'Bebas Neue',sans-serif;font-size:26px;letter-spacing:1px;color:var(--y)}
+.stat-l{font-size:10px;color:var(--mu);font-weight:600;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 
-  /* FILTERS */
-  .filter-bar{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
-  .filter-bar::-webkit-scrollbar{display:none}
-  .filter-chip{flex-shrink:0;padding:5px 14px;border-radius:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-  .filter-chip.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+/* FILTERS */
+.filter-bar{display:flex;gap:8px;margin-bottom:14px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.filter-bar::-webkit-scrollbar{display:none}
+.chip{flex-shrink:0;padding:5px 14px;border-radius:20px;background:transparent;border:1px solid var(--b);color:var(--mu);font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.chip.active{background:var(--y);border-color:var(--y);color:#000}
 
-  .store-bar{margin-bottom:12px}
-  .select-wrap{position:relative}
-  .select-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
-  .store-select,.form-select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:9px 32px 9px 12px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none;transition:border-color .2s;font-weight:500}
-  .store-select{padding-left:34px}
-  .store-select:focus,.form-select:focus{border-color:var(--yellow)}
-  .store-select option,.form-select option{background:#1E1E1E}
-  .search-wrap{position:relative;margin-bottom:14px}
-  .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
-  .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
-  .search-input:focus{border-color:var(--yellow)}
-  .search-input::placeholder{color:var(--muted)}
+.sw{position:relative;margin-bottom:12px}
+.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.ss{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;padding:9px 32px 9px 34px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none;font-weight:500}
+.ss:focus{border-color:var(--y)}
+.ss option{background:#1E1E1E}
+.fs{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;padding:9px 32px 9px 12px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none;font-weight:500}
+.fs:focus{border-color:var(--y)}
+.fs option{background:#1E1E1E}
 
-  /* PRODUCT LIST */
-  .product-list{display:flex;flex-direction:column;gap:8px}
-  .product-row{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:12px;display:flex;align-items:center;gap:12px;transition:border-color .2s}
-  .product-row:hover{border-color:rgba(245,200,0,.3)}
-  .product-row-img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--surface2);flex-shrink:0}
-  .product-row-img-ph{width:52px;height:52px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
-  .product-row-info{flex:1;min-width:0}
-  .product-row-cat{font-size:9px;color:var(--yellow);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:2px}
-  .product-row-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .product-row-meta{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
-  .product-row-price{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.5px;color:var(--yellow)}
-  .product-row-store{font-size:10px;color:var(--muted)}
-  .product-row-actions{display:flex;gap:6px;flex-shrink:0}
-  .btn-sm{width:32px;height:32px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer;transition:opacity .15s}
-  .btn-sm:active{opacity:.7}
-  .btn-edit{background:var(--yellow);color:#000}
-  .btn-del{background:rgba(255,68,68,.15);color:var(--danger);border:1px solid rgba(255,68,68,.2)}
+.srch-w{position:relative;margin-bottom:14px}
+.srch-i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.srch{width:100%;background:var(--s1);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
+.srch:focus{border-color:var(--y)}
+.srch::placeholder{color:var(--mu)}
 
-  /* STOCK */
-  .stock-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px;margin-bottom:8px}
-  .stock-item-row{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border)}
-  .stock-item-row:last-child{border-bottom:none}
-  .stock-item-info{flex:1;margin-right:12px}
-  .stock-item-name{font-weight:600;font-size:13px}
-  .stock-item-store{font-size:11px;color:var(--muted);margin-top:2px}
-  .size-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-  .size-chip{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-  .size-chip.has{background:rgba(61,220,132,.12);border-color:rgba(61,220,132,.3);color:var(--success)}
+/* PRODUCT LIST */
+.plist{display:flex;flex-direction:column;gap:8px}
+.prow{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:12px}
+.prow:hover{border-color:rgba(245,200,0,.3)}
+.prow-img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--s2);flex-shrink:0}
+.prow-ph{width:52px;height:52px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.prow-info{flex:1;min-width:0}
+.prow-cat{font-size:9px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:2px}
+.prow-name{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.prow-meta{display:flex;align-items:center;gap:8px;margin-top:4px;flex-wrap:wrap}
+.prow-price{font-family:'Bebas Neue',sans-serif;font-size:15px;letter-spacing:.5px;color:var(--y)}
+.prow-store{font-size:10px;color:var(--mu)}
+.prow-acts{display:flex;gap:6px;flex-shrink:0}
+.bsm{width:32px;height:32px;border-radius:8px;border:none;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+.bsm:active{opacity:.7}
+.b-edit{background:var(--y);color:#000}
+.b-del{background:rgba(255,68,68,.15);color:var(--re);border:1px solid rgba(255,68,68,.2)}
 
-  /* SETTINGS */
-  .settings-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
-  .settings-header{padding:12px 16px;border-bottom:1px solid var(--border);font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px}
-  .settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
-  .settings-row:last-child{border-bottom:none}
-  .settings-row-label{font-size:14px;font-weight:500}
-  .settings-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:7px 10px;outline:none;flex:1;min-width:0;transition:border-color .2s}
-  .settings-input:focus{border-color:var(--yellow)}
+/* STOCK */
+.stock-card{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:14px;margin-bottom:8px}
+.srow{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--b)}
+.srow:last-child{border-bottom:none}
+.srow-info{flex:1;margin-right:12px}
+.srow-name{font-weight:600;font-size:13px}
+.srow-store{font-size:11px;color:var(--mu);margin-top:2px}
+.sz-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+.sz-chip{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--s2);border:1px solid var(--b);color:var(--mu)}
+.sz-chip.has{background:rgba(61,220,132,.12);border-color:rgba(61,220,132,.3);color:var(--gr)}
 
-  /* Подкатегории — управление */
-  .subcat-list{padding:0 16px 8px;display:flex;flex-direction:column;gap:6px}
-  .subcat-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
-  .subcat-item:last-child{border-bottom:none}
-  .subcat-item-name{flex:1;font-size:13px;font-weight:500}
-  .subcat-add-row{display:flex;gap:8px;padding:0 16px 12px}
+/* SETTINGS */
+.sgrp{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);overflow:hidden;margin-bottom:16px}
+.sgrp-h{padding:12px 16px;border-bottom:1px solid var(--b);font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px}
+.srow2{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--b);gap:12px}
+.srow2:last-child{border-bottom:none}
+.srow2-lbl{font-size:14px;font-weight:500}
+.sinp{background:var(--s2);border:1px solid var(--b);border-radius:6px;color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;padding:7px 10px;outline:none;flex:1;min-width:0;transition:border-color .2s}
+.sinp:focus{border-color:var(--y)}
+.subcat-list{padding:0 16px 8px;display:flex;flex-direction:column;gap:6px}
+.subcat-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--b)}
+.subcat-item:last-child{border-bottom:none}
+.subcat-name{flex:1;font-size:13px;font-weight:500}
+.subcat-add{display:flex;gap:8px;padding:0 16px 12px}
 
-  .fb-status{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;font-weight:600;border-bottom:1px solid var(--border)}
-  .fb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-  .fb-dot.ok{background:var(--success)}
-  .fb-dot.err{background:var(--danger)}
-  .fb-dot.pulse{background:var(--yellow);animation:pulse 1s infinite}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+.fb-st{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;font-weight:600;border-bottom:1px solid var(--b)}
+.fb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.fb-dot.ok{background:var(--gr)}
+.fb-dot.err{background:var(--re)}
+.fb-dot.pulse{background:var(--y);animation:pulse 1s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  .fab{position:fixed;bottom:18px;right:14px;z-index:200}
-  .fab-btn{display:flex;align-items:center;gap:8px;background:var(--yellow);color:#000;border:none;border-radius:50px;padding:13px 20px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(245,200,0,.35);transition:transform .15s}
-  .fab-btn:active{transform:scale(.95)}
+/* FAB */
+.fab{position:fixed;bottom:18px;right:14px;z-index:200}
+.fab-btn{display:flex;align-items:center;gap:8px;background:var(--y);color:#000;border:none;border-radius:50px;padding:13px 20px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(245,200,0,.35)}
+.fab-btn:active{transform:scale(.95)}
 
-  .overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(6px)}
-  .overlay.open{display:flex}
-  .modal{background:var(--surface);border-radius:16px 16px 0 0;border-top:2px solid var(--yellow);width:100%;max-height:92vh;overflow-y:auto;padding:18px 16px 44px;animation:slideUp .25s ease}
-  @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
-  .modal-handle{width:38px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 16px}
-  .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--yellow);margin-bottom:18px}
-  .form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:14px;padding:10px 12px;outline:none;resize:vertical;min-height:60px;transition:border-color .2s}
-  .form-textarea:focus{border-color:var(--yellow)}
-  .form-row{display:flex;gap:10px}
-  .form-row .form-group{flex:1}
+/* MODAL */
+.ovl{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(6px)}
+.ovl.open{display:flex}
+.modal{background:var(--s1);border-radius:16px 16px 0 0;border-top:2px solid var(--y);width:100%;max-height:92vh;overflow-y:auto;padding:18px 16px 44px;animation:up .25s ease}
+@keyframes up{from{transform:translateY(100%)}to{transform:translateY(0)}}
+.modal-h{width:38px;height:3px;background:var(--b);border-radius:2px;margin:0 auto 16px}
+.modal-t{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--y);margin-bottom:18px}
+.frow{display:flex;gap:10px}
+.frow .fg{flex:1}
+.fta{width:100%;background:var(--s2);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:14px;padding:10px 12px;outline:none;resize:vertical;min-height:60px}
+.fta:focus{border-color:var(--y)}
 
-  .size-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
-  .size-btn{padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;user-select:none}
-  .size-btn.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+/* SIZE GRID */
+.sz-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
+.sz-btn{padding:9px 4px;border-radius:8px;border:1.5px solid var(--b);background:var(--s2);color:var(--mu);font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;user-select:none}
+.sz-btn.active{background:var(--y);border-color:var(--y);color:#000}
 
-  .img-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
-  .img-option{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
-  .img-option.selected{border-color:var(--yellow);background:var(--yellow-soft)}
-  .img-option-icon{font-size:22px;margin-bottom:5px}
-  .img-option-label{font-size:11px;font-weight:600;color:var(--muted)}
-  .img-option.selected .img-option-label{color:var(--yellow)}
-  .photo-search-row{display:flex;gap:8px;margin-top:8px}
-  .btn-search-photo{background:var(--yellow);color:#000;border:none;border-radius:var(--radius-sm);padding:9px 14px;font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
-  .photo-results{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;max-height:200px;overflow-y:auto}
-  .photo-thumb{aspect-ratio:1;border-radius:6px;object-fit:cover;cursor:pointer;border:2px solid transparent;transition:border-color .15s;background:var(--surface2)}
-  .photo-thumb:hover,.photo-thumb.selected{border-color:var(--yellow)}
-  .searching-text{color:var(--muted);font-size:12px;text-align:center;padding:16px 0}
-  .img-preview{width:100%;height:130px;object-fit:cover;border-radius:var(--radius-sm);border:1px solid var(--border-y);display:none;margin-top:8px;background:var(--surface2)}
-  .upload-zone{border:2px dashed var(--border-y);border-radius:var(--radius-sm);padding:20px;text-align:center;cursor:pointer;margin-top:8px;transition:border-color .2s;display:none}
-  .upload-zone:hover{border-color:var(--yellow)}
-  .upload-zone-text{color:var(--muted);font-size:13px}
-  .upload-zone-hint{color:var(--muted);font-size:11px;margin-top:4px}
-  #fileInput{display:none}
-  .btn-primary{width:100%;background:var(--yellow);color:#000;border:none;border-radius:var(--radius-sm);padding:13px;font-family:'Onest',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:8px}
-  .btn-primary:active{opacity:.85}
-  .btn-secondary{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px;transition:background .15s}
-  .btn-secondary:hover{background:var(--surface2)}
-  .btn-danger-full{width:100%;background:rgba(255,68,68,.1);color:var(--danger);border:1px solid rgba(255,68,68,.25);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px;font-weight:600}
-  .empty{text-align:center;padding:60px 20px;color:var(--muted)}
-  .empty-icon{font-size:48px;margin-bottom:12px}
-  .empty-text{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px;letter-spacing:1px}
-  .empty-sub{font-size:13px}
-  ::-webkit-scrollbar{width:3px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+/* IMG PICKER */
+.img-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.img-opt{background:var(--s2);border:2px solid var(--b);border-radius:var(--rs);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
+.img-opt.sel{border-color:var(--y);background:var(--ys)}
+.img-opt-ic{font-size:22px;margin-bottom:5px}
+.img-opt-lb{font-size:11px;font-weight:600;color:var(--mu)}
+.img-opt.sel .img-opt-lb{color:var(--y)}
+.ph-row{display:flex;gap:8px;margin-top:8px}
+.ph-btn{background:var(--y);color:#000;border:none;border-radius:var(--rs);padding:9px 14px;font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.ph-res{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;max-height:200px;overflow-y:auto}
+.ph-th{aspect-ratio:1;border-radius:6px;object-fit:cover;cursor:pointer;border:2px solid transparent;background:var(--s2)}
+.ph-th:hover,.ph-th.sel{border-color:var(--y)}
+.ph-srch{color:var(--mu);font-size:12px;text-align:center;padding:16px 0}
+.img-prev{width:100%;height:130px;object-fit:cover;border-radius:var(--rs);border:1px solid var(--by);display:none;margin-top:8px;background:var(--s2)}
+.up-zone{border:2px dashed var(--by);border-radius:var(--rs);padding:20px;text-align:center;cursor:pointer;margin-top:8px;display:none}
+.up-zone:hover{border-color:var(--y)}
+.up-txt{color:var(--mu);font-size:13px}
+.up-hint{color:var(--mu);font-size:11px;margin-top:4px}
+#fileInput{display:none}
 
-  /* Confirm dialog */
-  .confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
-  .confirm-overlay.open{display:flex}
-  .confirm-box{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--danger);border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center}
-  .confirm-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--danger);margin-bottom:8px}
-  .confirm-text{font-size:14px;color:var(--muted);margin-bottom:20px;line-height:1.5}
-  .confirm-btns{display:flex;gap:10px}
-  .confirm-yes{flex:1;background:var(--danger);color:#fff;border:none;border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
-  .confirm-no{flex:1;background:var(--surface2);color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer}
+/* BUTTONS */
+.bp{width:100%;background:var(--y);color:#000;border:none;border-radius:var(--rs);padding:13px;font-family:'Onest',sans-serif;font-size:15px;font-weight:700;cursor:pointer;margin-top:8px}
+.bp:active{opacity:.85}
+.bs{width:100%;background:transparent;color:var(--mu);border:1px solid var(--b);border-radius:var(--rs);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px}
+.bs:hover{background:var(--s2)}
+.bdanger{width:100%;background:rgba(255,68,68,.1);color:var(--re);border:1px solid rgba(255,68,68,.25);border-radius:var(--rs);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px;font-weight:600}
+
+.empty{text-align:center;padding:60px 20px;color:var(--mu)}
+.empty-ic{font-size:48px;margin-bottom:12px}
+.empty-t{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--tx);margin-bottom:6px;letter-spacing:1px}
+.empty-s{font-size:13px}
+
+/* CONFIRM DIALOG */
+.conf-ovl{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;display:none;align-items:center;justify-content:center;padding:24px}
+.conf-ovl.open{display:flex}
+.conf-box{background:var(--s1);border:1px solid var(--b);border-top:3px solid var(--re);border-radius:16px;padding:24px;width:100%;max-width:320px;text-align:center}
+.conf-ttl{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--re);margin-bottom:8px}
+.conf-txt{font-size:14px;color:var(--mu);margin-bottom:20px;line-height:1.5}
+.conf-btns{display:flex;gap:10px}
+.conf-yes{flex:1;background:var(--re);color:#fff;border:none;border-radius:var(--rs);padding:12px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer}
+.conf-no{flex:1;background:var(--s2);color:var(--mu);border:1px solid var(--b);border-radius:var(--rs);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer}
+
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
 </style>
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- ══ LOGIN ══ -->
 <div class="login-screen" id="loginScreen">
   <div class="login-box">
     <div class="login-logo">
-      <div class="logo-box" style="width:44px;height:44px">
+      <div class="logo-b" style="width:44px;height:44px">
         <svg width="26" height="26" viewBox="0 0 32 32" fill="none"><ellipse cx="11.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="20.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="16" cy="13.5" rx="6" ry="5.5" fill="#111"/><ellipse cx="16" cy="22" rx="7.5" ry="6.5" fill="#111"/><circle cx="23" cy="24" r="2.2" fill="#111"/><circle cx="14" cy="13" r="0.9" fill="#F5C800"/></svg>
       </div>
-      <div><div class="login-title">Жёлтый Кролик</div><div class="login-sub">Панель управления</div></div>
+      <div><div class="login-ttl">Жёлтый Кролик</div><div class="login-sub">Панель управления</div></div>
     </div>
-    <div class="login-heading">Вход для администратора</div>
-    <div class="login-desc">Введите логин и пароль для доступа</div>
-    <div class="form-group"><label class="form-label">Логин</label><input class="form-input" id="loginInput" type="text" placeholder="Логин" autocomplete="username"></div>
-    <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" id="passInput" type="password" placeholder="Пароль" autocomplete="current-password"></div>
-    <button class="btn-login" onclick="doLogin()">Войти</button>
-    <div class="login-error" id="loginError">Неверный логин или пароль</div>
+    <div class="login-h">Вход для администратора</div>
+    <div class="login-d">Введите логин и пароль для доступа</div>
+    <div class="fg"><label class="fl">Логин</label><input class="fi" id="loginInput" type="text" placeholder="Логин" autocomplete="username"></div>
+    <div class="fg"><label class="fl">Пароль</label><input class="fi" id="passInput" type="password" placeholder="Пароль" autocomplete="current-password"></div>
+    <button class="btn-login" id="btnLogin">Войти</button>
+    <div class="login-err" id="loginErr">Неверный логин или пароль</div>
   </div>
 </div>
 
-<!-- APP -->
+<!-- ══ APP ══ -->
 <div class="app" id="app">
-  <div class="header">
-    <div class="header-top">
+  <div class="hdr">
+    <div class="hdr-top">
       <div class="brand">
-        <div class="logo-box" style="width:36px;height:36px;border-radius:8px">
+        <div class="logo-b" style="width:36px;height:36px;border-radius:8px">
           <svg width="22" height="22" viewBox="0 0 32 32" fill="none"><ellipse cx="11.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="20.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="16" cy="13.5" rx="6" ry="5.5" fill="#111"/><ellipse cx="16" cy="22" rx="7.5" ry="6.5" fill="#111"/><circle cx="23" cy="24" r="2.2" fill="#111"/><circle cx="14" cy="13" r="0.9" fill="#F5C800"/></svg>
         </div>
-        <div><div class="brand-name">Жёлтый Кролик</div><div class="brand-sub">Управление</div></div>
+        <div><div class="brand-n">Жёлтый Кролик</div><div class="brand-s">Управление</div></div>
       </div>
       <div style="display:flex;align-items:center;gap:8px">
-        <span class="admin-badge">ADMIN</span>
-        <button class="btn-icon" onclick="doLogout()" title="Выйти">🚪</button>
+        <span class="badge">ADMIN</span>
+        <button class="icon-btn" id="btnLogout">🚪</button>
       </div>
     </div>
     <div class="nav-tabs">
-      <div class="nav-tab active" data-tab="products" onclick="switchTab('products')">📦 Товары</div>
-      <div class="nav-tab" data-tab="stock" onclick="switchTab('stock')">📊 Остатки</div>
-      <div class="nav-tab" data-tab="settings" onclick="switchTab('settings')">⚙️ Настройки</div>
+      <div class="nav-tab active" data-tab="products">📦 Товары</div>
+      <div class="nav-tab" data-tab="stock">📊 Остатки</div>
+      <div class="nav-tab" data-tab="settings">⚙️ Настройки</div>
     </div>
   </div>
 
   <!-- PRODUCTS -->
-  <div class="section active" id="tab-products">
-    <div class="stats-row" id="statsRow"></div>
-    <div class="store-bar">
-      <div class="select-wrap">
-        <span class="select-icon">📍</span>
-        <select class="store-select" id="storeFilter" onchange="renderProducts()"></select>
-      </div>
+  <div class="sec active" id="tab-products">
+    <div class="stats" id="statsRow"></div>
+    <div class="sw">
+      <span class="si">📍</span>
+      <select class="ss" id="storeFilter"></select>
     </div>
     <div class="filter-bar" id="catFilter">
-      <button class="filter-chip active" data-cat="shoes">Обувь</button>
-      <button class="filter-chip" data-cat="clothes">Одежда</button>
-      <button class="filter-chip" data-cat="accessories">Аксессуары</button>
+      <button class="chip active" data-cat="shoes">Обувь</button>
+      <button class="chip" data-cat="clothes">Одежда</button>
+      <button class="chip" data-cat="accessories">Аксессуары</button>
     </div>
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="searchInput" placeholder="Поиск..." oninput="renderProducts()">
+    <div class="srch-w">
+      <span class="srch-i">🔍</span>
+      <input class="srch" id="searchInput" placeholder="Поиск...">
     </div>
-    <div class="product-list" id="productList"></div>
+    <div class="plist" id="productList"></div>
   </div>
 
   <!-- STOCK -->
-  <div class="section" id="tab-stock">
-    <div class="store-bar">
-      <div class="select-wrap">
-        <span class="select-icon">📍</span>
-        <select class="store-select" id="stockStoreFilter" onchange="renderStock()"></select>
-      </div>
-    </div>
+  <div class="sec" id="tab-stock">
+    <div class="sw"><span class="si">📍</span><select class="ss" id="stockFilter"></select></div>
     <div id="stockSection"></div>
   </div>
 
   <!-- SETTINGS -->
-  <div class="section" id="tab-settings">
-    <div class="settings-group">
-      <div class="settings-header">🔥 Firebase</div>
-      <div class="fb-status" id="fbStatus">
-        <div class="fb-dot pulse" id="fbDot"></div>
-        <span id="fbStatusText">Подключение...</span>
-      </div>
+  <div class="sec" id="tab-settings">
+    <div class="sgrp">
+      <div class="sgrp-h">🔥 Firebase</div>
+      <div class="fb-st" id="fbStatus"><div class="fb-dot pulse" id="fbDot"></div><span id="fbTxt">Подключение...</span></div>
     </div>
-
-    <div class="settings-group">
-      <div class="settings-header">🏬 Адреса магазинов</div>
-      <div class="settings-row"><div><div class="settings-row-label">Магазин 1</div></div><input class="settings-input" id="addr1"></div>
-      <div class="settings-row"><div><div class="settings-row-label">Магазин 2</div></div><input class="settings-input" id="addr2"></div>
-      <div class="settings-row"><div><div class="settings-row-label">Магазин 3</div></div><input class="settings-input" id="addr3"></div>
-      <div class="settings-row"><div><div class="settings-row-label">Магазин 4</div></div><input class="settings-input" id="addr4"></div>
-      <div style="padding:0 16px 16px"><button class="btn-primary" onclick="saveAddresses()">💾 Сохранить адреса</button></div>
+    <div class="sgrp">
+      <div class="sgrp-h">🏬 Адреса магазинов</div>
+      <div class="srow2"><div><div class="srow2-lbl">Магазин 1</div></div><input class="sinp" id="addr1"></div>
+      <div class="srow2"><div><div class="srow2-lbl">Магазин 2</div></div><input class="sinp" id="addr2"></div>
+      <div class="srow2"><div><div class="srow2-lbl">Магазин 3</div></div><input class="sinp" id="addr3"></div>
+      <div class="srow2"><div><div class="srow2-lbl">Магазин 4</div></div><input class="sinp" id="addr4"></div>
+      <div style="padding:0 16px 16px"><button class="bp" id="btnSaveAddr">💾 Сохранить адреса</button></div>
     </div>
-
-    <div class="settings-group">
-      <div class="settings-header">👕 Подкатегории одежды</div>
+    <div class="sgrp">
+      <div class="sgrp-h">👕 Подкатегории одежды</div>
       <div class="subcat-list" id="subcatList"></div>
-      <div class="subcat-add-row">
-        <input class="form-input" id="newSubcatInput" placeholder="Название подкатегории" style="flex:1">
-        <button class="btn-primary" style="width:auto;padding:10px 16px;margin-top:0" onclick="addSubcat()">＋</button>
+      <div class="subcat-add">
+        <input class="fi" id="newSubcatInput" placeholder="Название подкатегории" style="flex:1">
+        <button class="bp" style="width:auto;padding:10px 16px;margin-top:0" id="btnAddSubcat">＋</button>
       </div>
     </div>
-
-    <div class="settings-group">
-      <div class="settings-header">🔐 Смена пароля</div>
-      <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:10px">
-        <input class="form-input" id="newLogin" placeholder="Новый логин">
-        <input class="form-input" id="newPass" type="password" placeholder="Новый пароль">
-        <button class="btn-primary" style="margin-top:0" onclick="changeCredentials()">Сменить</button>
+    <div class="sgrp">
+      <div class="sgrp-h">🔐 Смена пароля</div>
+      <div class="srow2" style="flex-direction:column;align-items:stretch;gap:10px">
+        <input class="fi" id="newLogin" placeholder="Новый логин">
+        <input class="fi" id="newPass" type="password" placeholder="Новый пароль">
+        <button class="bp" style="margin-top:0" id="btnChangeCreds">Сменить</button>
       </div>
     </div>
-
-    <button class="btn-danger-full" id="btnDeleteAll">🗑 Удалить все товары</button>
+    <button class="bdanger" id="btnDeleteAll">🗑 Удалить все товары</button>
   </div>
 
-  <div class="fab" id="fab">
-    <button class="fab-btn" onclick="openModal()">＋ Добавить товар</button>
+  <div class="fab" id="fab"><button class="fab-btn" id="btnAdd">＋ Добавить товар</button></div>
+</div>
+
+<!-- ══ CONFIRM DIALOG — стоит ДО script, чтобы DOM был готов ══ -->
+<div class="conf-ovl" id="confOvl">
+  <div class="conf-box">
+    <div class="conf-ttl" id="confTitle">Удалить?</div>
+    <div class="conf-txt" id="confText">Это действие нельзя отменить</div>
+    <div class="conf-btns">
+      <button class="conf-yes" id="confYes">Удалить</button>
+      <button class="conf-no" id="confNo">Отмена</button>
+    </div>
   </div>
 </div>
 
-<!-- MODAL -->
-<div class="overlay" id="addOverlay">
+<!-- ══ MODAL добавления/редактирования ══ -->
+<div class="ovl" id="addOvl">
   <div class="modal">
-    <div class="modal-handle"></div>
-    <div class="modal-title" id="modalTitle">Новый товар</div>
-    <div class="form-group"><label class="form-label">Название</label><input class="form-input" id="fieldName" placeholder="Например: Кроссовки Nike Air Max"></div>
-    <div class="form-row">
-      <div class="form-group">
-        <label class="form-label">Категория</label>
-        <select class="form-select" id="fieldCat" onchange="updateSubcatOptions()">
+    <div class="modal-h"></div>
+    <div class="modal-t" id="modalTitle">Новый товар</div>
+    <div class="fg"><label class="fl">Название</label><input class="fi" id="fName" placeholder="Например: Кроссовки Nike Air Max"></div>
+    <div class="frow">
+      <div class="fg"><label class="fl">Категория</label>
+        <select class="fs" id="fCat">
           <option value="shoes">Обувь</option>
           <option value="clothes">Одежда</option>
           <option value="accessories">Аксессуары</option>
         </select>
       </div>
-      <div class="form-group"><label class="form-label">Цена (₽)</label><input class="form-input" id="fieldPrice" type="number" placeholder="0"></div>
+      <div class="fg"><label class="fl">Цена (₽)</label><input class="fi" id="fPrice" type="number" placeholder="0"></div>
     </div>
-    <!-- Подкатегория — только для одежды -->
-    <div class="form-group" id="subcatGroup" style="display:none">
-      <label class="form-label">Подкатегория одежды</label>
-      <select class="form-select" id="fieldSubcat"></select>
+    <div class="fg" id="subcatGroup" style="display:none">
+      <label class="fl">Подкатегория одежды</label>
+      <select class="fs" id="fSubcat"></select>
     </div>
-    <div class="form-group"><label class="form-label">Магазин</label><select class="form-select" id="fieldStore"></select></div>
-    <div class="form-group"><label class="form-label">Описание</label><textarea class="form-textarea" id="fieldDesc" placeholder="Краткое описание..."></textarea></div>
-    <div class="form-group">
-      <label class="form-label">Размеры в наличии</label>
-      <div class="size-grid" id="sizeGrid"></div>
+    <div class="fg"><label class="fl">Магазин</label><select class="fs" id="fStore"></select></div>
+    <div class="fg"><label class="fl">Описание</label><textarea class="fta" id="fDesc" placeholder="Краткое описание..."></textarea></div>
+    <div class="fg">
+      <label class="fl">Размеры в наличии</label>
+      <div class="sz-grid" id="sizeGrid"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">Фото товара</label>
-      <div class="img-picker">
-        <div class="img-option selected" id="optUrl" onclick="switchImgMode('url')"><div class="img-option-icon">🔗</div><div class="img-option-label">Ссылка / поиск</div></div>
-        <div class="img-option" id="optUpload" onclick="switchImgMode('upload')"><div class="img-option-icon">📷</div><div class="img-option-label">Загрузить фото</div></div>
+    <div class="fg">
+      <label class="fl">Фото товара</label>
+      <div class="img-pick">
+        <div class="img-opt sel" id="optUrl"><div class="img-opt-ic">🔗</div><div class="img-opt-lb">Ссылка / поиск</div></div>
+        <div class="img-opt" id="optUpload"><div class="img-opt-ic">📷</div><div class="img-opt-lb">Загрузить фото</div></div>
       </div>
       <div id="urlMode">
-        <div class="photo-search-row">
-          <input class="form-input" id="photoSearch" placeholder="Поиск или URL...">
-          <button class="btn-search-photo" onclick="searchPhotos()">Найти</button>
+        <div class="ph-row">
+          <input class="fi" id="photoSearch" placeholder="Поиск или URL...">
+          <button class="ph-btn" id="btnPhSearch">Найти</button>
         </div>
-        <div id="photoResultsWrap"></div>
-        <img class="img-preview" id="imgPreviewUrl" alt="">
+        <div id="photoRes"></div>
+        <img class="img-prev" id="prevUrl" alt="">
       </div>
       <div id="uploadMode" style="display:none">
-        <div class="upload-zone" id="uploadZone" onclick="document.getElementById('fileInput').click()">
-          <div style="font-size:30px;margin-bottom:8px">📂</div>
-          <div class="upload-zone-text">Нажмите для выбора файла</div>
-          <div class="upload-zone-hint">JPG, PNG, WEBP до 5 МБ</div>
-        </div>
+        <div class="up-zone" id="upZone"><div style="font-size:30px;margin-bottom:8px">📂</div><div class="up-txt">Нажмите для выбора файла</div><div class="up-hint">JPG, PNG, WEBP до 5 МБ</div></div>
         <input type="file" id="fileInput" accept="image/*">
-        <img class="img-preview" id="imgPreviewUpload" alt="">
+        <img class="img-prev" id="prevUpload" alt="">
       </div>
     </div>
-    <button class="btn-primary" onclick="saveProduct()">💾 Сохранить</button>
-    <button class="btn-secondary" onclick="closeModal()">Отмена</button>
+    <button class="bp" id="btnSave">💾 Сохранить</button>
+    <button class="bs" id="btnCancel">Отмена</button>
   </div>
 </div>
 
+<!-- ══ FIREBASE + LOGIC ══ -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, writeBatch }
+                             from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
-  authDomain: "yellow-rabbit-shop.firebaseapp.com",
-  projectId: "yellow-rabbit-shop",
-  storageBucket: "yellow-rabbit-shop.firebasestorage.app",
-  messagingSenderId: "470956648612",
-  appId: "1:470956648612:web:8651c509a4e3c28a969e31"
+/* ── CONFIG ── */
+const FB = {
+  apiKey:"AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
+  authDomain:"yellow-rabbit-shop.firebaseapp.com",
+  projectId:"yellow-rabbit-shop",
+  storageBucket:"yellow-rabbit-shop.firebasestorage.app",
+  messagingSenderId:"470956648612",
+  appId:"1:470956648612:web:8651c509a4e3c28a969e31"
 };
+const db = getFirestore(initializeApp(FB));
 
-const fbApp = initializeApp(firebaseConfig);
-const db = getFirestore(fbApp);
+/* ── CONSTANTS ── */
+const CAT  = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
+const ICON = {shoes:'👟',clothes:'👕',accessories:'👜'};
+const SIZES= [36,37,38,39,40,41,42,43,44,45,46];
+const D_LOGIN='EasyShop39!', D_PASS='Xk#7m2@Pq9!';
 
-const DEFAULT_LOGIN = 'EasyShop39!';
-const DEFAULT_PASS  = 'Xk#7m2@Pq9!';
-function getCredentials(){ try{ const c=localStorage.getItem('yk_credentials'); if(c) return JSON.parse(c); }catch(e){} return {login:DEFAULT_LOGIN,pass:DEFAULT_PASS}; }
-function saveCredentials(obj){ localStorage.setItem('yk_credentials',JSON.stringify(obj)); }
+/* ── STATE ── */
+let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
+let SUBCATS=[{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'Спорт. штаны'},{key:'jeans',label:'Джинсы'},{key:'outerwear',label:'Верхняя одежда'}];
+let curCat='shoes', editId=null, imgMode='url', upData=null, selImg=null, selSizes=[];
+let unsubP=null, unsubS=null;
 
-const CAT_LABELS = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
-const CAT_ICONS  = {shoes:'👟',clothes:'👕',accessories:'👜'};
-const ALL_SIZES_MODAL = [36,37,38,39,40,41,42,43,44,45,46];
-
-// Подкатегории — хранятся локально, можно расширять
-let SUBCATS = [
-  {key:'suits',    label:'Костюмы'},
-  {key:'sport_pants', label:'Спорт. штаны'},
-  {key:'jeans',    label:'Джинсы'},
-  {key:'outerwear',label:'Верхняя одежда'}
-];
+/* ── CREDENTIALS ── */
+function getCreds(){ try{ const c=localStorage.getItem('yk_creds'); if(c) return JSON.parse(c); }catch(e){} return {login:D_LOGIN,pass:D_PASS}; }
+function saveCreds(o){ localStorage.setItem('yk_creds',JSON.stringify(o)); }
 function loadSubcats(){ try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){} }
 function saveSubcats(){ localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); }
 
-let products = [];
-let STORES = {'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
-let currentCat = 'shoes';
-let editingId = null;
-let imgMode = 'url';
-let uploadedImgData = null;
-let selectedSearchImg = null;
-let selectedSizes = [];
-let unsubscribeProducts = null;
-let unsubscribeSettings = null;
+/* ── FB STATUS ── */
+function fbSt(cls,txt){ document.getElementById('fbDot').className='fb-dot '+cls; document.getElementById('fbTxt').textContent=txt; }
 
-function setFbStatus(s,t){ document.getElementById('fbDot').className='fb-dot '+s; document.getElementById('fbStatusText').textContent=t; }
-
+/* ── LISTENERS ── */
 function startListeners(){
-  unsubscribeProducts = onSnapshot(
-    collection(db,'products'),
-    { includeMetadataChanges: true },
-    snap=>{
-      // Игнорируем снапшоты из локального кэша — рендерим только серверные данные
-      if(snap.metadata.fromCache) return;
-      products=snap.docs.map(d=>({id:d.id,...d.data()}));
-      products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-      setFbStatus('ok','Подключено — данные синхронизируются');
-      renderAll();
-    },
-    err=>{ setFbStatus('err','Ошибка: '+err.code); }
-  );
-  unsubscribeSettings = onSnapshot(
-    doc(db,'settings','stores'),
-    { includeMetadataChanges: true },
-    snap=>{
-      if(snap.metadata.fromCache) return;
-      if(snap.exists()){ STORES=snap.data(); fillAddressFields(); rebuildStoreDropdowns(); renderAll(); }
-    }
-  );
+  unsubP = onSnapshot(collection(db,'products'),{includeMetadataChanges:true}, snap=>{
+    if(snap.metadata.fromCache) return;
+    products = snap.docs.map(d=>({id:d.id,...d.data()}));
+    products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    fbSt('ok','Подключено — синхронизируется');
+    renderAll();
+  }, err=>fbSt('err','Ошибка: '+err.code));
+
+  unsubS = onSnapshot(doc(db,'settings','stores'),{includeMetadataChanges:true}, snap=>{
+    if(snap.metadata.fromCache) return;
+    if(snap.exists()){ STORES=snap.data(); fillAddr(); rebuildDropdowns(); renderAll(); }
+  });
 }
 
+/* ── LOGIN ── */
+document.getElementById('btnLogin').addEventListener('click', doLogin);
+document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
+document.getElementById('btnLogout').addEventListener('click', doLogout);
+
 function doLogin(){
-  const creds=getCredentials();
+  const {login,pass}=getCreds();
   const l=document.getElementById('loginInput').value.trim();
   const p=document.getElementById('passInput').value;
-  if(l===creds.login&&p===creds.pass){
+  if(l===login && p===pass){
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').style.display='block';
     sessionStorage.setItem('yk_auth','1');
-    fillAddressFields(); rebuildStoreDropdowns(); renderSubcatSettings(); startListeners();
+    fillAddr(); rebuildDropdowns(); renderSubcats(); startListeners();
   } else {
-    document.getElementById('loginError').style.display='block';
+    document.getElementById('loginErr').style.display='block';
     document.getElementById('passInput').value='';
   }
 }
 function doLogout(){
-  if(unsubscribeProducts) unsubscribeProducts();
-  if(unsubscribeSettings) unsubscribeSettings();
+  if(unsubP) unsubP(); if(unsubS) unsubS();
   sessionStorage.removeItem('yk_auth');
   document.getElementById('loginScreen').style.display='flex';
   document.getElementById('app').style.display='none';
   document.getElementById('loginInput').value='';
   document.getElementById('passInput').value='';
 }
-document.getElementById('passInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
-document.getElementById('loginInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
-window.doLogin=doLogin; window.doLogout=doLogout;
 
-function switchTab(tab){
-  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
-  document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='tab-'+tab));
+/* ── TABS ── */
+document.querySelectorAll('.nav-tab').forEach(t=>t.addEventListener('click',()=>{
+  const tab=t.dataset.tab;
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.toggle('active',x.dataset.tab===tab));
+  document.querySelectorAll('.sec').forEach(s=>s.classList.toggle('active',s.id==='tab-'+tab));
   document.getElementById('fab').style.display=tab==='products'?'block':'none';
   if(tab==='stock') renderStock();
-  if(tab==='settings') renderSubcatSettings();
-}
-window.switchTab=switchTab;
+  if(tab==='settings') renderSubcats();
+}));
 
+/* ── RENDER ── */
 function renderStats(){
-  const total=products.length;
-  const out=products.filter(p=>!p.sizes||p.sizes.length===0).length;
-  const cats=new Set(products.map(p=>p.cat)).size;
+  const t=products.length, o=products.filter(p=>!p.sizes||!p.sizes.length).length, c=new Set(products.map(p=>p.cat)).size;
   document.getElementById('statsRow').innerHTML=
-    `<div class="stat-card"><div class="stat-val">${total}</div><div class="stat-label">Товаров</div></div>
-     <div class="stat-card"><div class="stat-val">${cats}</div><div class="stat-label">Категорий</div></div>
-     <div class="stat-card"><div class="stat-val" style="color:${out>0?'#FF4444':'#3DDC84'}">${out}</div><div class="stat-label">Нет размеров</div></div>`;
+    `<div class="stat"><div class="stat-v">${t}</div><div class="stat-l">Товаров</div></div>
+     <div class="stat"><div class="stat-v">${c}</div><div class="stat-l">Категорий</div></div>
+     <div class="stat"><div class="stat-v" style="color:${o?'#FF4444':'#3DDC84'}">${o}</div><div class="stat-l">Нет размеров</div></div>`;
 }
 
-function getSubcatLabel(key){ const s=SUBCATS.find(x=>x.key===key); return s?s.label:''; }
+function subLabel(k){ const s=SUBCATS.find(x=>x.key===k); return s?s.label:''; }
 
 function getFiltered(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   const store=document.getElementById('storeFilter').value;
   return products.filter(p=>
-    p.cat===currentCat &&
+    p.cat===curCat &&
     (store==='all'||p.store===store) &&
     (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q))
   );
@@ -491,328 +478,287 @@ function getFiltered(){
 function renderProducts(){
   renderStats();
   const list=document.getElementById('productList');
-  const filtered=getFiltered();
-  if(!filtered.length){ list.innerHTML=`<div class="empty"><div class="empty-icon">🐇</div><div class="empty-text">Нет товаров</div><div class="empty-sub">Добавьте первый товар</div></div>`; return; }
-  list.innerHTML=filtered.map(p=>{
-    const sc=(!p.sizes||p.sizes.length===0)?'color:var(--danger)':p.sizes.length<=3?'color:var(--yellow)':'color:var(--success)';
-    const sub=p.subcat?` · ${getSubcatLabel(p.subcat)}`:'';
-    return `<div class="product-row">
-      ${p.img?`<img class="product-row-img" src="${p.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
-      <div class="product-row-img-ph" style="${p.img?'display:none':''}">${CAT_ICONS[p.cat]||'📦'}</div>
-      <div class="product-row-info">
-        <div class="product-row-cat">${CAT_LABELS[p.cat]||p.cat}${sub}</div>
-        <div class="product-row-name">${p.name}</div>
-        <div class="product-row-meta">
-          <div class="product-row-price">${Number(p.price).toLocaleString('ru')} ₽</div>
-          <div class="product-row-store">📍 ${STORES[p.store]||''}</div>
-          <div style="font-size:11px;font-weight:700;${sc}">${(p.sizes&&p.sizes.length)?p.sizes.length+' р-р':'Нет'}</div>
+  const f=getFiltered();
+  if(!f.length){ list.innerHTML=`<div class="empty"><div class="empty-ic">🐇</div><div class="empty-t">Нет товаров</div><div class="empty-s">Добавьте первый товар</div></div>`; return; }
+  list.innerHTML=f.map(p=>{
+    const sc=(!p.sizes||!p.sizes.length)?'color:var(--re)':p.sizes.length<=3?'color:var(--y)':'color:var(--gr)';
+    const sub=p.subcat?` · ${subLabel(p.subcat)}`:'';
+    return `<div class="prow">
+      ${p.img?`<img class="prow-img" src="${p.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
+      <div class="prow-ph" style="${p.img?'display:none':''}">${ICON[p.cat]||'📦'}</div>
+      <div class="prow-info">
+        <div class="prow-cat">${CAT[p.cat]||p.cat}${sub}</div>
+        <div class="prow-name">${p.name}</div>
+        <div class="prow-meta">
+          <div class="prow-price">${Number(p.price).toLocaleString('ru')} ₽</div>
+          <div class="prow-store">📍 ${STORES[p.store]||''}</div>
+          <div style="font-size:11px;font-weight:700;${sc}">${p.sizes&&p.sizes.length?p.sizes.length+' р-р':'Нет'}</div>
         </div>
       </div>
-      <div class="product-row-actions">
-        <button class="btn-sm btn-edit" onclick="openEdit('${p.id}')">✏️</button>
-        <button class="btn-sm btn-del" onclick="delProduct('${p.id}')">🗑</button>
+      <div class="prow-acts">
+        <button class="bsm b-edit" data-edit="${p.id}">✏️</button>
+        <button class="bsm b-del" data-del="${p.id}">🗑</button>
       </div>
     </div>`;
   }).join('');
+
+  // Вешаем события через делегирование — нет onclick в строках
+  list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>openEdit(btn.dataset.edit)));
+  list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>showConfirm(
+    'Удалить товар?','Товар будет удалён из каталога',
+    ()=>deleteDoc(doc(db,'products',String(btn.dataset.del)))
+  )));
 }
 
 function renderStock(){
-  const storeF=document.getElementById('stockStoreFilter').value;
-  const filtered=products.filter(p=>storeF==='all'||p.store===storeF);
+  const sf=document.getElementById('stockFilter').value;
+  const f=products.filter(p=>sf==='all'||p.store===sf);
   const sec=document.getElementById('stockSection');
-  if(!filtered.length){ sec.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Нет товаров</div></div>`; return; }
-  sec.innerHTML=`<div class="stock-card">${filtered.map(p=>{
-    const sizes=p.sizes||[];
-    const chips=ALL_SIZES_MODAL.map(s=>`<span class="size-chip ${sizes.includes(s)?'has':''}">${s}</span>`).join('');
-    return `<div class="stock-item-row" style="flex-direction:column;align-items:flex-start;gap:8px">
+  if(!f.length){ sec.innerHTML=`<div class="empty"><div class="empty-ic">📦</div><div class="empty-t">Нет товаров</div></div>`; return; }
+  sec.innerHTML=`<div class="stock-card">${f.map(p=>{
+    const szs=p.sizes||[];
+    return `<div class="srow" style="flex-direction:column;align-items:flex-start;gap:8px">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-        <div class="stock-item-info"><div class="stock-item-name">${p.name}</div><div class="stock-item-store">📍 ${STORES[p.store]||''}</div></div>
-        <button class="btn-sm btn-edit" onclick="openEdit('${p.id}')" style="flex-shrink:0">✏️</button>
+        <div class="srow-info"><div class="srow-name">${p.name}</div><div class="srow-store">📍 ${STORES[p.store]||''}</div></div>
+        <button class="bsm b-edit" data-edit="${p.id}">✏️</button>
       </div>
-      <div class="size-chips">${chips}</div>
+      <div class="sz-chips">${SIZES.map(s=>`<span class="sz-chip${szs.includes(s)?' has':''}">${s}</span>`).join('')}</div>
     </div>`;
   }).join('')}</div>`;
+  sec.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>openEdit(btn.dataset.edit)));
 }
 
 function renderAll(){ renderProducts(); }
-window.renderProducts=renderProducts;
 
-// SUBCATS SETTINGS
-function renderSubcatSettings(){
-  const list=document.getElementById('subcatList');
-  if(!list) return;
-  list.innerHTML=SUBCATS.map((s,i)=>`
+/* ── SUBCATS ── */
+function renderSubcats(){
+  const el=document.getElementById('subcatList'); if(!el) return;
+  el.innerHTML=SUBCATS.map((s,i)=>`
     <div class="subcat-item">
-      <div class="subcat-item-name">${s.label}</div>
-      <button class="btn-sm btn-del" onclick="removeSubcat(${i})">🗑</button>
+      <div class="subcat-name">${s.label}</div>
+      <button class="bsm b-del" data-ri="${i}">🗑</button>
     </div>`).join('');
+  el.querySelectorAll('[data-ri]').forEach(btn=>btn.addEventListener('click',()=>{
+    SUBCATS.splice(Number(btn.dataset.ri),1); saveSubcats(); renderSubcats(); updateSubcatSelect();
+  }));
 }
-window.removeSubcat=function(i){
-  SUBCATS.splice(i,1); saveSubcats(); renderSubcatSettings(); updateSubcatOptions();
-};
-window.addSubcat=function(){
-  const input=document.getElementById('newSubcatInput');
-  const label=input.value.trim(); if(!label) return;
+document.getElementById('btnAddSubcat').addEventListener('click',()=>{
+  const inp=document.getElementById('newSubcatInput');
+  const label=inp.value.trim(); if(!label) return;
   const key=label.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now();
-  SUBCATS.push({key,label}); saveSubcats(); renderSubcatSettings(); updateSubcatOptions();
-  input.value='';
-};
+  SUBCATS.push({key,label}); saveSubcats(); renderSubcats(); updateSubcatSelect(); inp.value='';
+});
 
-// MODAL
+/* ── CONFIRM DIALOG ── */
+let _confCb=null;
+function showConfirm(title,text,cb){
+  document.getElementById('confTitle').textContent=title;
+  document.getElementById('confText').textContent=text;
+  _confCb=cb;
+  document.getElementById('confOvl').classList.add('open');
+}
+function closeConfirm(){
+  document.getElementById('confOvl').classList.remove('open');
+  _confCb=null;
+}
+// Кнопка ДА — вызывает callback, который уже содержит Firebase-вызов из замыкания
+document.getElementById('confYes').addEventListener('click',()=>{
+  const cb=_confCb;
+  closeConfirm();
+  if(cb) cb();
+});
+document.getElementById('confNo').addEventListener('click', closeConfirm);
+
+/* ── DELETE ALL ── */
+document.getElementById('btnDeleteAll').addEventListener('click',()=>{
+  showConfirm('Удалить все товары?','Весь каталог будет удалён без возможности восстановления', async()=>{
+    const snap=await getDocs(collection(db,'products'));
+    const batch=writeBatch(db);
+    snap.docs.forEach(d=>batch.delete(d.ref));
+    await batch.commit();
+  });
+});
+
+/* ── MODAL ── */
+document.getElementById('btnAdd').addEventListener('click', openModal);
+document.getElementById('btnCancel').addEventListener('click', closeModal);
+document.getElementById('btnSave').addEventListener('click', saveProduct);
+document.getElementById('addOvl').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
+document.getElementById('fCat').addEventListener('change', updateSubcatSelect);
+
 function openModal(){
-  editingId=null;
+  editId=null;
   document.getElementById('modalTitle').textContent='Новый товар';
-  document.getElementById('fieldName').value='';
-  document.getElementById('fieldCat').value='shoes';
-  document.getElementById('fieldSubcat').value='';
+  document.getElementById('fName').value='';
+  document.getElementById('fCat').value='shoes';
+  document.getElementById('fPrice').value='';
+  document.getElementById('fDesc').value='';
   document.getElementById('subcatGroup').style.display='none';
-  document.getElementById('fieldPrice').value='';
-  if(document.getElementById('fieldStore').options.length>0) document.getElementById('fieldStore').selectedIndex=0;
-  document.getElementById('fieldDesc').value='';
+  if(document.getElementById('fStore').options.length>0) document.getElementById('fStore').selectedIndex=0;
   buildSizeGrid([]);
-  uploadedImgData=null; selectedSearchImg=null;
-  document.getElementById('photoSearch').value='';
-  document.getElementById('photoResultsWrap').innerHTML='';
-  document.getElementById('imgPreviewUrl').style.display='none';
-  document.getElementById('imgPreviewUpload').style.display='none';
-  document.getElementById('fileInput').value='';
-  switchImgMode('url');
-  document.getElementById('addOverlay').classList.add('open');
+  resetImg();
+  switchImg('url');
+  document.getElementById('addOvl').classList.add('open');
 }
 
 function openEdit(id){
   const p=products.find(x=>x.id===id); if(!p) return;
-  editingId=id;
+  editId=id;
   document.getElementById('modalTitle').textContent='Редактировать товар';
-  document.getElementById('fieldName').value=p.name;
-  document.getElementById('fieldCat').value=p.cat;
-  updateSubcatOptions();
-  document.getElementById('fieldSubcat').value=p.subcat||'';
-  document.getElementById('fieldPrice').value=p.price;
-  document.getElementById('fieldStore').value=p.store;
-  document.getElementById('fieldDesc').value=p.desc||'';
+  document.getElementById('fName').value=p.name;
+  document.getElementById('fCat').value=p.cat;
+  document.getElementById('fPrice').value=p.price;
+  document.getElementById('fDesc').value=p.desc||'';
+  document.getElementById('fStore').value=p.store;
+  updateSubcatSelect();
+  document.getElementById('fSubcat').value=p.subcat||'';
   buildSizeGrid(p.sizes||[]);
-  uploadedImgData=null; selectedSearchImg=null;
-  document.getElementById('photoResultsWrap').innerHTML='';
-  document.getElementById('imgPreviewUrl').style.display='none';
-  document.getElementById('imgPreviewUpload').style.display='none';
+  resetImg();
   if(p.img&&p.img.startsWith('data:')){
-    switchImgMode('upload');
-    document.getElementById('imgPreviewUpload').src=p.img;
-    document.getElementById('imgPreviewUpload').style.display='block';
-    uploadedImgData=p.img;
+    switchImg('upload');
+    document.getElementById('prevUpload').src=p.img;
+    document.getElementById('prevUpload').style.display='block';
+    upData=p.img;
   } else {
-    switchImgMode('url');
+    switchImg('url');
     document.getElementById('photoSearch').value=p.img||'';
-    if(p.img){ document.getElementById('imgPreviewUrl').src=p.img; document.getElementById('imgPreviewUrl').style.display='block'; selectedSearchImg=p.img; }
+    if(p.img){ document.getElementById('prevUrl').src=p.img; document.getElementById('prevUrl').style.display='block'; selImg=p.img; }
   }
-  document.getElementById('addOverlay').classList.add('open');
+  document.getElementById('addOvl').classList.add('open');
 }
 
-function closeModal(){ document.getElementById('addOverlay').classList.remove('open'); }
+function closeModal(){ document.getElementById('addOvl').classList.remove('open'); }
 
 async function saveProduct(){
-  const name=document.getElementById('fieldName').value.trim(); if(!name){ alert('Введите название'); return; }
-  const cat=document.getElementById('fieldCat').value;
-  const subcat=cat==='clothes'?document.getElementById('fieldSubcat').value:'';
-  const price=parseInt(document.getElementById('fieldPrice').value)||0;
-  const store=document.getElementById('fieldStore').value;
-  const desc=document.getElementById('fieldDesc').value.trim();
+  const name=document.getElementById('fName').value.trim(); if(!name){ alert('Введите название'); return; }
+  const cat=document.getElementById('fCat').value;
+  const subcat=cat==='clothes'?document.getElementById('fSubcat').value:'';
+  const price=parseInt(document.getElementById('fPrice').value)||0;
+  const store=document.getElementById('fStore').value;
+  const desc=document.getElementById('fDesc').value.trim();
   let img='';
-  if(imgMode==='upload'&&uploadedImgData) img=uploadedImgData;
-  else if(imgMode==='url') img=selectedSearchImg||document.getElementById('photoSearch').value.trim();
-  const id=editingId||('p_'+Date.now());
-  const existing=editingId?products.find(p=>p.id===editingId):null;
-  const productData={id,name,cat,subcat,price,store,sizes:[...selectedSizes].sort((a,b)=>a-b),desc,img,createdAt:existing?.createdAt||Date.now()};
+  if(imgMode==='upload'&&upData) img=upData;
+  else if(imgMode==='url') img=selImg||document.getElementById('photoSearch').value.trim();
+  const id=editId||('p_'+Date.now());
+  const existing=editId?products.find(p=>p.id===editId):null;
   closeModal();
-  await setDoc(doc(db,'products',String(id)),productData);
+  await setDoc(doc(db,'products',String(id)),{
+    id,name,cat,subcat,price,store,
+    sizes:[...selSizes].sort((a,b)=>a-b),
+    desc,img,
+    createdAt:existing?.createdAt||Date.now()
+  });
 }
 
-async function _doDeleteProduct(id){
-  try {
-    await deleteDoc(doc(db,'products',String(id)));
-    console.log('deleted', id);
-  } catch(e){ console.error('delete error', e); alert('Ошибка удаления: '+e.message); }
+/* ── SIZE GRID ── */
+function buildSizeGrid(active=[]){
+  selSizes=[...active];
+  document.getElementById('sizeGrid').innerHTML=SIZES.map(s=>
+    `<button type="button" class="sz-btn${selSizes.includes(s)?' active':''}" data-sz="${s}">${s}</button>`
+  ).join('');
+  document.getElementById('sizeGrid').querySelectorAll('.sz-btn').forEach(btn=>
+    btn.addEventListener('click',()=>{
+      const s=Number(btn.dataset.sz);
+      const i=selSizes.indexOf(s);
+      if(i>-1) selSizes.splice(i,1); else selSizes.push(s);
+      selSizes.sort((a,b)=>a-b);
+      btn.classList.toggle('active',selSizes.includes(s));
+    })
+  );
 }
-async function _doDeleteAll(){
-  try {
-    const snap = await getDocs(collection(db,'products'));
-    const batch = writeBatch(db);
-    snap.docs.forEach(d => batch.delete(d.ref));
-    await batch.commit();
-    console.log('all deleted');
-  } catch(e){ console.error('deleteAll error', e); alert('Ошибка: '+e.message); }
-}
 
-window.openModal=openModal; window.openEdit=openEdit; window.closeModal=closeModal;
-window.saveProduct=saveProduct;
-
-// delProduct — показывает диалог, затем удаляет
-window.delProduct = function(id){
-  window._pendingDeleteId = id;
-  document.getElementById('confirmTitle').textContent = 'Удалить товар?';
-  document.getElementById('confirmText').textContent  = 'Товар будет удалён из каталога';
-  document.getElementById('confirmOverlay').classList.add('open');
-};
-
-// привязываем кнопки диалога напрямую к Firebase-функциям
-document.getElementById('confirmYes').addEventListener('click', async ()=>{
-  document.getElementById('confirmOverlay').classList.remove('open');
-  if(window._pendingDeleteAll){
-    window._pendingDeleteAll = false;
-    await _doDeleteAll();
-  } else if(window._pendingDeleteId){
-    const id = window._pendingDeleteId;
-    window._pendingDeleteId = null;
-    await _doDeleteProduct(id);
-  }
-});
-
-document.getElementById('btnDeleteAll').addEventListener('click', ()=>{
-  window._pendingDeleteAll = true;
-  window._pendingDeleteId  = null;
-  document.getElementById('confirmTitle').textContent = 'Удалить все товары?';
-  document.getElementById('confirmText').textContent  = 'Весь каталог будет удалён без возможности восстановления';
-  document.getElementById('confirmOverlay').classList.add('open');
-});
-
-// SUBCAT в модалке
-function updateSubcatOptions(){
-  const cat=document.getElementById('fieldCat').value;
-  const group=document.getElementById('subcatGroup');
-  group.style.display=cat==='clothes'?'block':'none';
-  const sel=document.getElementById('fieldSubcat');
-  sel.innerHTML='<option value="">— Без подкатегории —</option>'+
+/* ── SUBCAT SELECT ── */
+function updateSubcatSelect(){
+  const cat=document.getElementById('fCat').value;
+  document.getElementById('subcatGroup').style.display=cat==='clothes'?'block':'none';
+  document.getElementById('fSubcat').innerHTML=
+    '<option value="">— Без подкатегории —</option>'+
     SUBCATS.map(s=>`<option value="${s.key}">${s.label}</option>`).join('');
 }
-window.updateSubcatOptions=updateSubcatOptions;
 
-// SIZE GRID
-function buildSizeGrid(active=[]){
-  selectedSizes=[...active];
-  const grid=document.getElementById('sizeGrid');
-  grid.innerHTML=ALL_SIZES_MODAL.map(s=>`<button type="button" class="size-btn${selectedSizes.includes(s)?' active':''}" onclick="toggleSize(${s})">${s}</button>`).join('');
-}
-function toggleSize(s){
-  const idx=selectedSizes.indexOf(s);
-  if(idx>-1) selectedSizes.splice(idx,1); else selectedSizes.push(s);
-  selectedSizes.sort((a,b)=>a-b);
-  document.querySelectorAll('#sizeGrid .size-btn').forEach(btn=>btn.classList.toggle('active',selectedSizes.includes(Number(btn.textContent))));
-}
-window.toggleSize=toggleSize;
-
-// IMG
-function switchImgMode(mode){
+/* ── IMG ── */
+function resetImg(){ upData=null; selImg=null; document.getElementById('photoSearch').value=''; document.getElementById('photoRes').innerHTML=''; document.getElementById('prevUrl').style.display='none'; document.getElementById('prevUpload').style.display='none'; document.getElementById('fileInput').value=''; }
+function switchImg(mode){
   imgMode=mode;
-  document.getElementById('optUrl').classList.toggle('selected',mode==='url');
-  document.getElementById('optUpload').classList.toggle('selected',mode==='upload');
+  document.getElementById('optUrl').classList.toggle('sel',mode==='url');
+  document.getElementById('optUpload').classList.toggle('sel',mode==='upload');
   document.getElementById('urlMode').style.display=mode==='url'?'':'none';
   document.getElementById('uploadMode').style.display=mode==='upload'?'':'none';
-  document.getElementById('uploadZone').style.display=mode==='upload'?'block':'none';
+  document.getElementById('upZone').style.display=mode==='upload'?'block':'none';
 }
-window.switchImgMode=switchImgMode;
-
-function searchPhotos(){
-  const q=document.getElementById('photoSearch').value.trim(); if(!q) return;
-  const wrap=document.getElementById('photoResultsWrap');
-  wrap.innerHTML='<div class="searching-text">Поиск фото...</div>';
-  selectedSearchImg=null; document.getElementById('imgPreviewUrl').style.display='none';
-  const kw=encodeURIComponent(q);
-  const imgs=Array.from({length:6},(_,i)=>`https://source.unsplash.com/200x200/?${kw}&sig=${Date.now()+i*17}`);
-  wrap.innerHTML=`<div class="photo-results">${imgs.map(src=>`<img class="photo-thumb" src="${src}" data-src="${src}" onclick="selectPhoto(this)" onerror="this.style.display='none'">`).join('')}</div>`;
-}
-window.searchPhotos=searchPhotos;
-
-function selectPhoto(el){
-  document.querySelectorAll('.photo-thumb').forEach(t=>t.classList.remove('selected'));
-  el.classList.add('selected'); selectedSearchImg=el.dataset.src;
-  const prev=document.getElementById('imgPreviewUrl'); prev.src=selectedSearchImg; prev.style.display='block';
-}
-window.selectPhoto=selectPhoto;
-
-document.getElementById('fileInput').addEventListener('change',function(e){
+document.getElementById('optUrl').addEventListener('click',()=>switchImg('url'));
+document.getElementById('optUpload').addEventListener('click',()=>switchImg('upload'));
+document.getElementById('upZone').addEventListener('click',()=>document.getElementById('fileInput').click());
+document.getElementById('fileInput').addEventListener('change',e=>{
   const file=e.target.files[0]; if(!file) return;
   const fr=new FileReader();
-  fr.onload=ev=>{ uploadedImgData=ev.target.result; const prev=document.getElementById('imgPreviewUpload'); prev.src=uploadedImgData; prev.style.display='block'; };
+  fr.onload=ev=>{ upData=ev.target.result; const p=document.getElementById('prevUpload'); p.src=upData; p.style.display='block'; };
   fr.readAsDataURL(file);
 });
 document.getElementById('photoSearch').addEventListener('blur',function(){
-  const val=this.value.trim();
-  if(val.startsWith('http')){ selectedSearchImg=val; const prev=document.getElementById('imgPreviewUrl'); prev.src=val; prev.style.display='block'; }
+  const v=this.value.trim();
+  if(v.startsWith('http')){ selImg=v; const p=document.getElementById('prevUrl'); p.src=v; p.style.display='block'; }
+});
+document.getElementById('btnPhSearch').addEventListener('click',()=>{
+  const q=document.getElementById('photoSearch').value.trim(); if(!q) return;
+  selImg=null; document.getElementById('prevUrl').style.display='none';
+  const wrap=document.getElementById('photoRes');
+  wrap.innerHTML='<div class="ph-srch">Поиск фото...</div>';
+  const kw=encodeURIComponent(q);
+  const imgs=Array.from({length:6},(_,i)=>`https://source.unsplash.com/200x200/?${kw}&sig=${Date.now()+i*17}`);
+  wrap.innerHTML=`<div class="ph-res">${imgs.map(src=>`<img class="ph-th" src="${src}" data-src="${src}" onerror="this.style.display='none'">`).join('')}</div>`;
+  wrap.querySelectorAll('.ph-th').forEach(img=>img.addEventListener('click',()=>{
+    wrap.querySelectorAll('.ph-th').forEach(t=>t.classList.remove('sel'));
+    img.classList.add('sel'); selImg=img.dataset.src;
+    const p=document.getElementById('prevUrl'); p.src=selImg; p.style.display='block';
+  }));
 });
 
-// SETTINGS
-async function saveAddresses(){
-  STORES['1']=document.getElementById('addr1').value.trim()||STORES['1'];
-  STORES['2']=document.getElementById('addr2').value.trim()||STORES['2'];
-  STORES['3']=document.getElementById('addr3').value.trim()||STORES['3'];
-  STORES['4']=document.getElementById('addr4').value.trim()||STORES['4'];
+/* ── SETTINGS ── */
+document.getElementById('btnSaveAddr').addEventListener('click', async()=>{
+  ['1','2','3','4'].forEach(k=>{ const v=document.getElementById('addr'+k).value.trim(); if(v) STORES[k]=v; });
   await setDoc(doc(db,'settings','stores'),STORES);
   alert('✅ Адреса сохранены');
-}
-window.saveAddresses=saveAddresses;
-
-function changeCredentials(){
+});
+document.getElementById('btnChangeCreds').addEventListener('click',()=>{
   const l=document.getElementById('newLogin').value.trim();
   const p=document.getElementById('newPass').value;
   if(!l||!p){ alert('Заполните оба поля'); return; }
-  saveCredentials({login:l,pass:p});
+  saveCreds({login:l,pass:p});
   document.getElementById('newLogin').value=''; document.getElementById('newPass').value='';
   alert('✅ Данные для входа обновлены');
-}
-window.changeCredentials=changeCredentials;
+});
 
-function fillAddressFields(){
-  document.getElementById('addr1').value=STORES['1']||'';
-  document.getElementById('addr2').value=STORES['2']||'';
-  document.getElementById('addr3').value=STORES['3']||'';
-  document.getElementById('addr4').value=STORES['4']||'';
-}
-function rebuildStoreDropdowns(){
-  const allOpt='<option value="all">Все магазины</option>';
-  const opts=Object.entries(STORES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
-  document.getElementById('storeFilter').innerHTML=allOpt+opts;
-  document.getElementById('stockStoreFilter').innerHTML=allOpt+opts;
-  document.getElementById('fieldStore').innerHTML=opts;
+/* ── HELPERS ── */
+function fillAddr(){ ['1','2','3','4'].forEach(k=>{ document.getElementById('addr'+k).value=STORES[k]||''; }); }
+function rebuildDropdowns(){
+  const all='<option value="all">Все магазины</option>'+Object.entries(STORES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  document.getElementById('storeFilter').innerHTML=all;
+  document.getElementById('stockFilter').innerHTML=all;
+  document.getElementById('fStore').innerHTML=Object.entries(STORES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
 }
 
+/* ── SEARCH & CAT FILTER ── */
+document.getElementById('searchInput').addEventListener('input',renderProducts);
+document.getElementById('storeFilter').addEventListener('change',renderProducts);
+document.getElementById('stockFilter').addEventListener('change',renderStock);
 document.getElementById('catFilter').addEventListener('click',e=>{
-  if(!e.target.classList.contains('filter-chip')) return;
-  currentCat=e.target.dataset.cat;
-  document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===currentCat));
+  if(!e.target.classList.contains('chip')) return;
+  curCat=e.target.dataset.cat;
+  document.querySelectorAll('.chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===curCat));
   renderProducts();
 });
-document.getElementById('addOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 
-// INIT
+/* ── INIT ── */
 loadSubcats();
-rebuildStoreDropdowns();
+rebuildDropdowns();
 if(sessionStorage.getItem('yk_auth')==='1'){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').style.display='block';
-  fillAddressFields(); renderSubcatSettings(); startListeners();
+  fillAddr(); renderSubcats(); startListeners();
 } else {
-  setFbStatus('pulse','Ожидание входа...');
+  fbSt('pulse','Ожидание входа...');
 }
-
-// closeConfirm для кнопки Отмена
-function closeConfirm(){
-  document.getElementById('confirmOverlay').classList.remove('open');
-  window._pendingDeleteId  = null;
-  window._pendingDeleteAll = false;
-}
-window.closeConfirm = closeConfirm;
 </script>
-<!-- Confirm dialog -->
-<div class="confirm-overlay" id="confirmOverlay">
-  <div class="confirm-box">
-    <div class="confirm-title" id="confirmTitle">Удалить?</div>
-    <div class="confirm-text" id="confirmText">Это действие нельзя отменить</div>
-    <div class="confirm-btns">
-      <button class="confirm-yes" id="confirmYes">Удалить</button>
-      <button class="confirm-no" onclick="closeConfirm()">Отмена</button>
-    </div>
-  </div>
-</div>
 </body>
 </html>

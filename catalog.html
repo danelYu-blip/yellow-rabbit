@@ -6,131 +6,129 @@
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <title>Жёлтый Кролик — Каталог</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;500;600;700&display=swap');
-  :root{
-    --yellow:#F5C800;--black:#0A0A0A;--surface:#141414;--surface2:#1E1E1E;
-    --border:#2A2A2A;--border-y:rgba(245,200,0,0.25);
-    --text:#F5F5F0;--muted:#777;--danger:#FF4444;--success:#3DDC84;
-    --radius:12px;--radius-sm:8px;
-    --tg-top: env(safe-area-inset-top, 0px);
-  }
-  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-  body{font-family:'Onest',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;500;600;700&display=swap');
+:root{
+  --y:#F5C800; --bg:#0A0A0A; --s1:#141414; --s2:#1E1E1E;
+  --b:#2A2A2A; --by:rgba(245,200,0,.25);
+  --tx:#F5F5F0; --mu:#777; --re:#FF4444; --gr:#3DDC84;
+  --r:12px; --rs:8px;
+  --tg-top: env(safe-area-inset-top, 0px);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;overflow-x:hidden;font-size:14px}
 
-  /* HEADER */
-  .header{background:var(--black);border-bottom:2px solid var(--yellow);padding:0 14px 10px;padding-top:var(--tg-top);position:sticky;top:0;z-index:100}
-  .header-inner{padding-top:10px}
-  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
-  .brand{display:flex;align-items:center;gap:10px}
-  .logo-box{width:40px;height:40px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
-  .brand-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--yellow);line-height:1}
-  .brand-sub{font-size:10px;color:var(--muted);letter-spacing:.5px;font-weight:500;text-transform:uppercase;margin-top:2px}
+/* HEADER */
+.hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:0 14px 10px;padding-top:var(--tg-top);position:sticky;top:0;z-index:100}
+.hdr-inner{padding-top:10px}
+.hdr-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+.brand{display:flex;align-items:center;gap:10px}
+.logo-b{width:40px;height:40px;background:var(--y);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.brand-n{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--y);line-height:1}
+.brand-s{font-size:10px;color:var(--mu);letter-spacing:.5px;font-weight:500;text-transform:uppercase;margin-top:2px}
 
-  /* TABS — без «Всё» */
-  .tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
-  .tabs::-webkit-scrollbar{display:none}
-  .tab{flex-shrink:0;padding:5px 14px;border-radius:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Onest',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-  .tab.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+/* MAIN TABS */
+.tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+.tabs::-webkit-scrollbar{display:none}
+.tab{flex-shrink:0;padding:5px 14px;border-radius:20px;background:transparent;border:1px solid var(--b);color:var(--mu);font-family:'Onest',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.tab.active{background:var(--y);border-color:var(--y);color:#000}
 
-  /* SUBCATEGORY tabs */
-  .subtabs{display:none;flex-wrap:wrap;gap:5px;padding:8px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
-  .subtabs.visible{display:flex}
-  .subtab{padding:4px 12px;border-radius:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Onest',sans-serif;font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
-  .subtab.active{background:rgba(245,200,0,0.15);border-color:var(--yellow);color:var(--yellow)}
+/* SUBCATEGORY TABS */
+.subtabs{display:none;flex-wrap:wrap;gap:5px;padding:8px 14px;background:var(--s1);border-bottom:1px solid var(--b)}
+.subtabs.show{display:flex}
+.subtab{padding:4px 12px;border-radius:20px;background:transparent;border:1px solid var(--b);color:var(--mu);font-size:11px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+.subtab.active{background:rgba(245,200,0,.15);border-color:var(--y);color:var(--y)}
 
-  .store-bar{padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
-  .select-wrap{position:relative}
-  .select-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
-  .store-select{width:100%;background:var(--surface2);border:1px solid var(--border-y);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;font-weight:500;padding:9px 12px 9px 34px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none}
-  .store-select:focus{border-color:var(--yellow)}
-  .store-select option{background:#1E1E1E}
+/* STORE SELECT */
+.store-bar{padding:9px 14px;background:var(--s1);border-bottom:1px solid var(--b)}
+.sw{position:relative}
+.si{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.ss{width:100%;background:var(--s2);border:1px solid var(--by);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;font-weight:500;padding:9px 12px 9px 34px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none}
+.ss:focus{border-color:var(--y)}
+.ss option{background:#1E1E1E}
 
-  .search-bar{padding:9px 14px;background:var(--black)}
-  .search-wrap{position:relative}
-  .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
-  .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
-  .search-input:focus{border-color:var(--yellow)}
-  .search-input::placeholder{color:var(--muted)}
+/* SEARCH */
+.search-bar{padding:9px 14px;background:var(--bg)}
+.srch-w{position:relative}
+.srch-i{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+.srch{width:100%;background:var(--s1);border:1px solid var(--b);border-radius:var(--rs);color:var(--tx);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
+.srch:focus{border-color:var(--y)}
+.srch::placeholder{color:var(--mu)}
 
-  /* GRID */
-  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 10px 40px}
+/* GRID */
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 10px 40px}
 
-  /* CARD */
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;animation:fadeIn .3s ease}
-  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-  .card:active{transform:scale(.96);border-color:var(--yellow)}
-  .card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--surface2);display:block}
-  .card-img-placeholder{width:100%;aspect-ratio:1;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
-  .card-top-line{height:2px;background:var(--yellow)}
-  .card-body{padding:7px 8px 8px}
-  .card-category{font-size:9px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
-  .card-name{font-weight:600;font-size:12px;line-height:1.3;margin-bottom:4px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
-  .card-price{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.3px;color:var(--yellow);margin-bottom:3px}
+/* CARD */
+.card{background:var(--s1);border:1px solid var(--b);border-radius:10px;overflow:hidden;cursor:pointer;transition:transform .15s,border-color .15s;animation:fadein .3s ease}
+@keyframes fadein{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+.card:active{transform:scale(.96);border-color:var(--y)}
+.card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--s2);display:block}
+.card-ph{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:32px}
+.card-line{height:2px;background:var(--y)}
+.card-body{padding:7px 8px 8px}
+.card-cat{font-size:9px;color:var(--y);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
+.card-name{font-weight:600;font-size:12px;line-height:1.3;margin-bottom:4px;color:var(--tx);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-price{font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.3px;color:var(--y);margin-bottom:3px}
 
-  /* SIZE CHIPS — горизонтальная прокрутка с индикатором */
-  .sizes-wrap{position:relative;margin-top:3px}
-  .sizes-row{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:3px;scrollbar-width:none;padding-bottom:3px}
-  .sizes-row::-webkit-scrollbar{display:none}
-  /* жёлтая полоска-скроллбар */
-  .sizes-scroll-bar{height:2px;background:var(--border);border-radius:1px;margin-top:1px;overflow:hidden}
-  .sizes-scroll-thumb{height:2px;background:var(--yellow);border-radius:1px;width:50%;transition:width .2s,margin-left .2s}
-  .sz{flex-shrink:0;padding:2px 5px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(245,200,0,0.15);border:1px solid rgba(245,200,0,0.4);color:var(--yellow);line-height:1.4}
-  .no-sizes{font-size:9px;color:var(--danger);font-weight:700;margin-top:3px}
+/* SIZES ROW — горизонтальная прокрутка + жёлтый ползунок */
+.szw{position:relative;margin-top:3px}
+.sz-row{display:flex;flex-wrap:nowrap;overflow-x:auto;gap:3px;scrollbar-width:none;padding-bottom:2px}
+.sz-row::-webkit-scrollbar{display:none}
+.sz-bar{height:2px;background:var(--b);border-radius:1px;margin-top:1px;overflow:hidden}
+.sz-thumb{height:2px;background:var(--y);border-radius:1px;transition:width .15s,margin-left .15s}
+.sz{flex-shrink:0;padding:2px 5px;border-radius:4px;font-size:9px;font-weight:700;background:rgba(245,200,0,.15);border:1px solid rgba(245,200,0,.4);color:var(--y);line-height:1.4}
+.no-sz{font-size:9px;color:var(--re);font-weight:700;margin-top:3px}
 
-  /* EMPTY / LOADING */
-  .loading{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
-  .loading-icon{font-size:40px;margin-bottom:14px;animation:spin 1.5s linear infinite;display:inline-block}
-  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
-  .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
-  .empty-icon{font-size:52px;margin-bottom:14px}
-  .empty-text{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px;letter-spacing:1px}
-  .empty-sub{font-size:13px}
+/* LOADING / EMPTY */
+.loading{text-align:center;padding:60px 20px;color:var(--mu);grid-column:1/-1}
+.ld-ic{font-size:40px;margin-bottom:14px;animation:spin 1.5s linear infinite;display:inline-block}
+@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+.empty{text-align:center;padding:60px 20px;color:var(--mu);grid-column:1/-1}
+.empty-ic{font-size:52px;margin-bottom:14px}
+.empty-t{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--tx);margin-bottom:6px;letter-spacing:1px}
+.empty-s{font-size:13px}
 
-  /* DETAIL PAGE */
-  .page{position:fixed;inset:0;background:var(--black);z-index:200;overflow-y:auto;transform:translateX(100%);transition:transform .3s ease}
-  .page.open{transform:translateX(0)}
-  .detail-header{background:var(--black);border-bottom:2px solid var(--yellow);padding:0 14px 12px;padding-top:var(--tg-top);position:sticky;top:0;z-index:10}
-  .detail-header-inner{padding-top:10px}
-  .detail-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--yellow);line-height:1.1}
-  .detail-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--surface2)}
-  .detail-img-ph{width:100%;aspect-ratio:1;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:80px}
-  .detail-body{padding:16px 14px 40px}
-  .detail-cat{font-size:11px;color:var(--yellow);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:6px}
-  .detail-name{font-weight:700;font-size:22px;line-height:1.2;margin-bottom:8px;color:var(--text)}
-  .detail-price{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--yellow);margin-bottom:14px}
-  .detail-desc{font-size:14px;color:#ccc;line-height:1.6;margin-bottom:18px}
-  .detail-section-title{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
-  .detail-sizes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
-  .detail-sz{padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-  .detail-sz.in{background:rgba(245,200,0,0.15);border-color:rgba(245,200,0,0.5);color:var(--yellow)}
+/* DETAIL PAGE */
+.page{position:fixed;inset:0;background:var(--bg);z-index:200;overflow-y:auto;transform:translateX(100%);transition:transform .3s ease}
+.page.open{transform:translateX(0)}
+.det-hdr{background:var(--bg);border-bottom:2px solid var(--y);padding:0 14px 12px;padding-top:var(--tg-top);position:sticky;top:0;z-index:10}
+.det-hdr-inner{padding-top:10px}
+.det-title{font-family:'Bebas Neue',sans-serif;font-size:20px;letter-spacing:1px;color:var(--y);line-height:1.1}
+.det-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--s2)}
+.det-ph{width:100%;aspect-ratio:1;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:80px}
+.det-body{padding:16px 14px 40px}
+.det-cat{font-size:11px;color:var(--y);text-transform:uppercase;letter-spacing:.8px;font-weight:700;margin-bottom:6px}
+.det-name{font-weight:700;font-size:22px;line-height:1.2;margin-bottom:8px;color:var(--tx)}
+.det-price{font-family:'Bebas Neue',sans-serif;font-size:32px;letter-spacing:1px;color:var(--y);margin-bottom:14px}
+.det-desc{font-size:14px;color:#ccc;line-height:1.6;margin-bottom:18px}
+.det-sec{font-size:11px;font-weight:700;color:var(--mu);text-transform:uppercase;letter-spacing:.7px;margin-bottom:8px}
+.det-sizes{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:20px}
+.det-sz{padding:6px 12px;border-radius:8px;font-size:13px;font-weight:700;background:var(--s2);border:1px solid var(--b);color:var(--mu)}
+.det-sz.in{background:rgba(245,200,0,.15);border-color:rgba(245,200,0,.5);color:var(--y)}
+.stores-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
+.store-item{background:var(--s1);border:1px solid var(--by);border-radius:var(--rs);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
+.store-ic{font-size:16px;flex-shrink:0;margin-top:1px}
+.store-name{font-size:14px;font-weight:600;color:var(--tx)}
+.store-szs{font-size:11px;color:var(--mu);margin-top:3px}
 
-  /* Только магазины где ЕСТЬ товар */
-  .stores-list{display:flex;flex-direction:column;gap:8px;margin-bottom:20px}
-  .store-item{background:var(--surface);border:1px solid var(--border-y);border-radius:var(--radius-sm);padding:12px 14px;display:flex;align-items:flex-start;gap:10px}
-  .store-item-icon{font-size:16px;flex-shrink:0;margin-top:1px}
-  .store-item-name{font-size:14px;font-weight:600;color:var(--text)}
-  .store-item-sizes{font-size:11px;color:var(--muted);margin-top:3px}
-
-  ::-webkit-scrollbar{width:3px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+::-webkit-scrollbar{width:3px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--b);border-radius:2px}
 </style>
 </head>
 <body>
 
-<!-- CATALOG -->
+<!-- ══ CATALOG ══ -->
 <div id="catalogPage">
-  <div class="header">
-    <div class="header-inner">
-      <div class="header-top">
+  <div class="hdr">
+    <div class="hdr-inner">
+      <div class="hdr-top">
         <div class="brand">
-          <div class="logo-box">
+          <div class="logo-b">
             <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><ellipse cx="11.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="20.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="16" cy="13.5" rx="6" ry="5.5" fill="#111"/><ellipse cx="16" cy="22" rx="7.5" ry="6.5" fill="#111"/><circle cx="23" cy="24" r="2.2" fill="#111"/><circle cx="14" cy="13" r="0.9" fill="#F5C800"/></svg>
           </div>
-          <div><div class="brand-name">Жёлтый Кролик</div><div class="brand-sub">Обувь и одежда</div></div>
+          <div><div class="brand-n">Жёлтый Кролик</div><div class="brand-s">Обувь и одежда</div></div>
         </div>
       </div>
-      <!-- Главные вкладки — без «Всё» -->
       <div class="tabs" id="catTabs">
         <button class="tab active" data-cat="shoes">Обувь</button>
         <button class="tab" data-cat="clothes">Одежда</button>
@@ -139,87 +137,77 @@
     </div>
   </div>
 
-  <!-- Подкатегории одежды -->
-  <div class="subtabs" id="clothesSubtabs">
-    <button class="subtab active" data-sub="all">Все</button>
-    <button class="subtab" data-sub="suits">Костюмы</button>
-    <button class="subtab" data-sub="sport_pants">Спорт. штаны</button>
-    <button class="subtab" data-sub="jeans">Джинсы</button>
-    <button class="subtab" data-sub="outerwear">Верхняя одежда</button>
-  </div>
+  <div class="subtabs" id="subtabsEl"></div>
 
   <div class="store-bar">
-    <div class="select-wrap">
-      <span class="select-icon">📍</span>
-      <select class="store-select" id="storeSelect">
-        <option value="all">Все магазины</option>
-      </select>
+    <div class="sw">
+      <span class="si">📍</span>
+      <select class="ss" id="storeSelect"><option value="all">Все магазины</option></select>
     </div>
   </div>
 
   <div class="search-bar">
-    <div class="search-wrap">
-      <span class="search-icon">🔍</span>
-      <input class="search-input" id="searchInput" placeholder="Поиск по названию...">
+    <div class="srch-w">
+      <span class="srch-i">🔍</span>
+      <input class="srch" id="searchInput" placeholder="Поиск по названию...">
     </div>
   </div>
 
   <div class="grid" id="productGrid">
-    <div class="loading"><div class="loading-icon">🐇</div><div style="font-size:14px">Загрузка каталога...</div></div>
+    <div class="loading"><div class="ld-ic">🐇</div><div style="font-size:14px">Загрузка каталога...</div></div>
   </div>
 </div>
 
-<!-- DETAIL PAGE -->
+<!-- ══ DETAIL ══ -->
 <div class="page" id="detailPage">
-  <div class="detail-header">
-    <div class="detail-header-inner">
-      <div class="detail-title" id="detailHeaderTitle">Товар</div>
+  <div class="det-hdr">
+    <div class="det-hdr-inner">
+      <div class="det-title" id="detTitle">Товар</div>
     </div>
   </div>
-  <div id="detailContent"></div>
+  <div id="detContent"></div>
 </div>
 
+<!-- ══ FIREBASE + LOGIC ══ -->
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { initializeApp }  from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
-  authDomain: "yellow-rabbit-shop.firebaseapp.com",
-  projectId: "yellow-rabbit-shop",
-  storageBucket: "yellow-rabbit-shop.firebasestorage.app",
-  messagingSenderId: "470956648612",
-  appId: "1:470956648612:web:8651c509a4e3c28a969e31"
+const FB = {
+  apiKey:"AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
+  authDomain:"yellow-rabbit-shop.firebaseapp.com",
+  projectId:"yellow-rabbit-shop",
+  storageBucket:"yellow-rabbit-shop.firebasestorage.app",
+  messagingSenderId:"470956648612",
+  appId:"1:470956648612:web:8651c509a4e3c28a969e31"
 };
+const db = getFirestore(initializeApp(FB));
 
-const app = initializeApp(firebaseConfig);
-const db  = getFirestore(app);
+const CAT  = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
+const ICON = {shoes:'👟',clothes:'👕',accessories:'👜'};
+const ALL_SIZES = [36,37,38,39,40,41,42,43,44,45,46];
 
-const CAT_LABELS = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
-const CAT_ICONS  = {shoes:'👟',clothes:'👕',accessories:'👜'};
-const ALL_SIZES  = [36,37,38,39,40,41,42,43,44,45,46];
+// Подкатегории читаем из localStorage (синхронизированы с админкой на том же устройстве)
+// или используем дефолт
+let SUBCATS = [{key:'suits',label:'Костюмы'},{key:'sport_pants',label:'Спорт. штаны'},{key:'jeans',label:'Джинсы'},{key:'outerwear',label:'Верхняя одежда'}];
+try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
 
-const SUBCAT_LABELS = {
-  all:'Все', suits:'Костюмы', sport_pants:'Спорт. штаны',
-  jeans:'Джинсы', outerwear:'Верхняя одежда'
-};
+let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
+let curCat='shoes', curSub='all', curStore='all';
 
-let products     = [];
-let STORES       = {'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
-let currentCat   = 'shoes';
-let currentSub   = 'all';
-let currentStore = 'all';
-
-// Firebase
-onSnapshot(collection(db,'products'), snap => {
-  products = snap.docs.map(d=>({id:d.id,...d.data()}));
+/* ── FIREBASE LISTENERS ── */
+onSnapshot(collection(db,'products'),{includeMetadataChanges:true}, snap=>{
+  if(snap.metadata.fromCache) return;
+  products=snap.docs.map(d=>({id:d.id,...d.data()}));
   products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
   render();
 });
-onSnapshot(doc(db,'settings','stores'), snap => {
+onSnapshot(doc(db,'settings','stores'),{includeMetadataChanges:true}, snap=>{
+  if(snap.metadata.fromCache) return;
   if(snap.exists()){ STORES=snap.data(); buildStoreSelect(); render(); }
 });
 
+/* ── STORE SELECT ── */
 function buildStoreSelect(){
   const sel=document.getElementById('storeSelect');
   const prev=sel.value;
@@ -228,113 +216,106 @@ function buildStoreSelect(){
   sel.value=prev;
 }
 
+/* ── SUBTABS ── */
+function buildSubtabs(){
+  const el=document.getElementById('subtabsEl');
+  if(curCat!=='clothes'){ el.classList.remove('show'); return; }
+  el.classList.add('show');
+  el.innerHTML=['<button class="subtab active" data-sub="all">Все</button>',
+    ...SUBCATS.map(s=>`<button class="subtab${curSub===s.key?' active':''}" data-sub="${s.key}">${s.label}</button>`)
+  ].join('');
+  el.querySelectorAll('.subtab').forEach(btn=>btn.addEventListener('click',()=>{
+    curSub=btn.dataset.sub;
+    el.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub===curSub));
+    render();
+  }));
+}
+
+/* ── FILTER ── */
 function filterProducts(){
   const q=document.getElementById('searchInput').value.toLowerCase();
   return products.filter(p=>
-    p.cat===currentCat &&
-    (currentCat!=='clothes'||currentSub==='all'||p.subcat===currentSub) &&
-    (currentStore==='all'||p.store===currentStore) &&
+    p.cat===curCat &&
+    (curCat!=='clothes'||curSub==='all'||p.subcat===curSub) &&
+    (curStore==='all'||p.store===curStore) &&
     (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q))
   );
 }
 
-// Жёлтая полоска-скроллбар для размеров
-function initSizeScroll(card){
-  const row  = card.querySelector('.sizes-row');
-  const thumb= card.querySelector('.sizes-scroll-thumb');
-  if(!row||!thumb) return;
-  function update(){
-    const ratio = row.scrollWidth > row.clientWidth
-      ? row.clientWidth / row.scrollWidth : 1;
-    const pos   = ratio < 1
-      ? (row.scrollLeft / (row.scrollWidth - row.clientWidth)) * (100 - ratio*100) : 0;
-    thumb.style.width      = (ratio*100)+'%';
-    thumb.style.marginLeft = pos+'%';
-    // Если всё влезает — скрываем полоску
-    card.querySelector('.sizes-scroll-bar').style.display = ratio<1 ? 'block' : 'none';
+/* ── SIZES SCROLL INDICATOR ── */
+function initSzScroll(card){
+  const row=card.querySelector('.sz-row');
+  const thumb=card.querySelector('.sz-thumb');
+  const bar=card.querySelector('.sz-bar');
+  if(!row||!thumb||!bar) return;
+  function upd(){
+    const ratio=row.scrollWidth>row.clientWidth?row.clientWidth/row.scrollWidth:1;
+    const pos=ratio<1?(row.scrollLeft/(row.scrollWidth-row.clientWidth))*(100-ratio*100):0;
+    thumb.style.width=(ratio*100)+'%';
+    thumb.style.marginLeft=pos+'%';
+    bar.style.display=ratio<1?'block':'none';
   }
-  row.addEventListener('scroll', update);
-  update();
+  row.addEventListener('scroll',upd,{passive:true});
+  upd();
 }
 
+/* ── RENDER ── */
 function render(){
   const grid=document.getElementById('productGrid');
-  const filtered=filterProducts();
-  if(!filtered.length && products.length===0){
-    grid.innerHTML=`<div class="empty"><div class="empty-icon">🐇</div><div class="empty-text">Каталог пуст</div><div class="empty-sub">Скоро здесь появятся товары</div></div>`;
+  const f=filterProducts();
+  if(!f.length&&products.length===0){
+    grid.innerHTML=`<div class="empty"><div class="empty-ic">🐇</div><div class="empty-t">Каталог пуст</div><div class="empty-s">Скоро здесь появятся товары</div></div>`;
     return;
   }
-  if(!filtered.length){
-    grid.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Ничего не найдено</div><div class="empty-sub">Попробуйте изменить фильтр</div></div>`;
+  if(!f.length){
+    grid.innerHTML=`<div class="empty"><div class="empty-ic">🔍</div><div class="empty-t">Ничего не найдено</div><div class="empty-s">Попробуйте изменить фильтр</div></div>`;
     return;
   }
-
-  grid.innerHTML = filtered.map(p=>`
+  grid.innerHTML=f.map(p=>`
     <div class="card" data-id="${p.id}">
-      <div class="card-top-line"></div>
+      <div class="card-line"></div>
       ${p.img?`<img class="card-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
-      <div class="card-img-placeholder" style="${p.img?'display:none':''}">${CAT_ICONS[p.cat]||'📦'}</div>
+      <div class="card-ph" style="${p.img?'display:none':''}">${ICON[p.cat]||'📦'}</div>
       <div class="card-body">
-        <div class="card-category">${CAT_LABELS[p.cat]||p.cat}</div>
+        <div class="card-cat">${CAT[p.cat]||p.cat}</div>
         <div class="card-name">${p.name}</div>
         <div class="card-price">${Number(p.price).toLocaleString('ru')} ₽</div>
-        ${(p.sizes&&p.sizes.length)
-          ? `<div class="sizes-wrap">
-               <div class="sizes-row">${p.sizes.map(s=>`<span class="sz">${s}</span>`).join('')}</div>
-               <div class="sizes-scroll-bar"><div class="sizes-scroll-thumb"></div></div>
-             </div>`
-          : '<div class="no-sizes">Нет</div>'
-        }
+        ${p.sizes&&p.sizes.length
+          ?`<div class="szw"><div class="sz-row">${p.sizes.map(s=>`<span class="sz">${s}</span>`).join('')}</div><div class="sz-bar"><div class="sz-thumb"></div></div></div>`
+          :`<div class="no-sz">Нет</div>`}
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 
-  // Инициализируем скролл-индикаторы
   grid.querySelectorAll('.card').forEach(card=>{
-    initSizeScroll(card);
-    card.addEventListener('click', ()=>openDetail(card.dataset.id));
+    initSzScroll(card);
+    card.addEventListener('click',()=>openDetail(card.dataset.id));
   });
 }
 
-// DETAIL PAGE
-window.openDetail = function(id){
+/* ── DETAIL PAGE ── */
+function openDetail(id){
   const p=products.find(x=>x.id===id); if(!p) return;
+  document.getElementById('detTitle').textContent=p.name;
 
-  document.getElementById('detailHeaderTitle').textContent=p.name;
+  // Только магазины где есть товар
+  const avail=Object.entries(STORES).filter(([k])=>p.store===k&&p.sizes&&p.sizes.length);
+  const storesHtml=avail.length
+    ?avail.map(([k,v])=>`<div class="store-item"><div class="store-ic">🟢</div><div><div class="store-name">${v}</div><div class="store-szs">Размеры: ${p.sizes.join(', ')}</div></div></div>`).join('')
+    :`<div style="color:var(--mu);font-size:13px">Нет в наличии ни в одном магазине</div>`;
 
-  // Только магазины где товар есть
-  const availStores = Object.entries(STORES)
-    .filter(([k])=> p.store===k && p.sizes && p.sizes.length>0);
+  const sub=p.subcat&&SUBCATS.find(x=>x.key===p.subcat)?` · ${SUBCATS.find(x=>x.key===p.subcat).label}`:'';
 
-  const storesHtml = availStores.length
-    ? availStores.map(([k,v])=>`
-        <div class="store-item">
-          <div class="store-item-icon">🟢</div>
-          <div>
-            <div class="store-item-name">${v}</div>
-            <div class="store-item-sizes">Размеры: ${p.sizes.join(', ')}</div>
-          </div>
-        </div>`).join('')
-    : `<div style="color:var(--muted);font-size:13px">Нет в наличии ни в одном магазине</div>`;
-
-  const allSizesHtml='<div class="detail-sizes">'+
-    ALL_SIZES.map(s=>`<span class="detail-sz${(p.sizes||[]).includes(s)?' in':''}">${s}</span>`).join('')+
-    '</div>';
-
-  // Подкатегория
-  const subcatLabel = p.subcat && SUBCAT_LABELS[p.subcat] ? ` · ${SUBCAT_LABELS[p.subcat]}` : '';
-
-  document.getElementById('detailContent').innerHTML=`
-    ${p.img?`<img class="detail-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
-    <div class="detail-img-ph" style="${p.img?'display:none':''}">${CAT_ICONS[p.cat]||'📦'}</div>
-    <div class="detail-body">
-      <div class="detail-cat">${CAT_LABELS[p.cat]||p.cat}${subcatLabel}</div>
-      <div class="detail-name">${p.name}</div>
-      <div class="detail-price">${Number(p.price).toLocaleString('ru')} ₽</div>
-      ${p.desc?`<div class="detail-desc">${p.desc}</div>`:''}
-      <div class="detail-section-title">Размеры</div>
-      ${allSizesHtml}
-      <div class="detail-section-title">Наличие по магазинам</div>
+  document.getElementById('detContent').innerHTML=`
+    ${p.img?`<img class="det-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
+    <div class="det-ph" style="${p.img?'display:none':''}">${ICON[p.cat]||'📦'}</div>
+    <div class="det-body">
+      <div class="det-cat">${CAT[p.cat]||p.cat}${sub}</div>
+      <div class="det-name">${p.name}</div>
+      <div class="det-price">${Number(p.price).toLocaleString('ru')} ₽</div>
+      ${p.desc?`<div class="det-desc">${p.desc}</div>`:''}
+      <div class="det-sec">Размеры</div>
+      <div class="det-sizes">${ALL_SIZES.map(s=>`<span class="det-sz${(p.sizes||[]).includes(s)?' in':''}">${s}</span>`).join('')}</div>
+      <div class="det-sec">Наличие по магазинам</div>
       <div class="stores-list">${storesHtml}</div>
     </div>`;
 
@@ -345,27 +326,24 @@ window.openDetail = function(id){
     window.Telegram.WebApp.BackButton.show();
     window.Telegram.WebApp.BackButton.onClick(closeDetail);
   }
-};
+}
 
-window.closeDetail = function(){
+function closeDetail(){
   document.getElementById('detailPage').classList.remove('open');
-  if(window.Telegram?.WebApp?.BackButton)
-    window.Telegram.WebApp.BackButton.hide();
-};
+  if(window.Telegram?.WebApp?.BackButton) window.Telegram.WebApp.BackButton.hide();
+}
 
-// TELEGRAM
+/* ── TELEGRAM ── */
 if(window.Telegram?.WebApp){
   const tg=window.Telegram.WebApp;
   tg.expand();
   try{tg.requestFullscreen();}catch(e){}
   try{tg.setHeaderColor('#0A0A0A');}catch(e){}
   try{tg.setBackgroundColor('#0A0A0A');}catch(e){}
-
   function applyInset(){
-    const content=tg.contentSafeAreaInset||{};
-    const safe=tg.safeAreaInset||{};
-    const total=(content.top||0)+(safe.top||0);
-    if(total>0) document.documentElement.style.setProperty('--tg-top', total+'px');
+    const c=tg.contentSafeAreaInset||{}, s=tg.safeAreaInset||{};
+    const t=(c.top||0)+(s.top||0);
+    if(t>0) document.documentElement.style.setProperty('--tg-top',t+'px');
   }
   applyInset();
   tg.onEvent('safeAreaChanged',applyInset);
@@ -374,31 +352,18 @@ if(window.Telegram?.WebApp){
   tg.ready();
 }
 
-// TABS
+/* ── EVENTS ── */
 document.getElementById('catTabs').addEventListener('click',e=>{
   if(!e.target.classList.contains('tab')) return;
-  currentCat=e.target.dataset.cat;
-  currentSub='all';
-  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===currentCat));
-  // Подкатегории — только для одежды
-  const sub=document.getElementById('clothesSubtabs');
-  sub.classList.toggle('visible', currentCat==='clothes');
-  document.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub==='all'));
-  render();
+  curCat=e.target.dataset.cat; curSub='all';
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===curCat));
+  buildSubtabs(); render();
 });
-
-document.getElementById('clothesSubtabs').addEventListener('click',e=>{
-  if(!e.target.classList.contains('subtab')) return;
-  currentSub=e.target.dataset.sub;
-  document.querySelectorAll('.subtab').forEach(t=>t.classList.toggle('active',t.dataset.sub===currentSub));
-  render();
-});
-
-document.getElementById('storeSelect').addEventListener('change',e=>{ currentStore=e.target.value; render(); });
+document.getElementById('storeSelect').addEventListener('change',e=>{ curStore=e.target.value; render(); });
 document.getElementById('searchInput').addEventListener('input',render);
 
-// Начальный рендер с «Обувь» активной
-render();
+/* ── INIT ── */
+buildSubtabs();
 </script>
 </body>
 </html>
