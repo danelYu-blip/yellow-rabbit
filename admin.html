@@ -417,8 +417,14 @@ let unsubP=null, unsubS=null;
 /* ── CREDENTIALS ── */
 function getCreds(){ try{ const c=localStorage.getItem('yk_creds'); if(c) return JSON.parse(c); }catch(e){} return {login:D_LOGIN,pass:D_PASS}; }
 function saveCreds(o){ localStorage.setItem('yk_creds',JSON.stringify(o)); }
-function loadSubcats(){ try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){} }
-function saveSubcats(){ localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); }
+// Подкатегории хранятся в Firebase (doc settings/subcats)
+async function saveSubcats(){
+  await setDoc(doc(db,'settings','subcats'),{list:SUBCATS});
+  localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); // кэш для быстрой загрузки
+}
+function loadSubcatsLocal(){
+  try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
+}
 
 /* ── FB STATUS ── */
 function fbSt(cls,txt){ document.getElementById('fbDot').className='fb-dot '+cls; document.getElementById('fbTxt').textContent=txt; }
@@ -435,6 +441,16 @@ function startListeners(){
   unsubS = onSnapshot(doc(db,'settings','stores'),{includeMetadataChanges:true}, snap=>{
     if(snap.metadata.fromCache) return;
     if(snap.exists()){ STORES=snap.data(); fillAddr(); rebuildDropdowns(); renderAll(); }
+  });
+
+  // Слушаем подкатегории из Firebase
+  onSnapshot(doc(db,'settings','subcats'),{includeMetadataChanges:true}, snap=>{
+    if(snap.metadata.fromCache) return;
+    if(snap.exists()&&snap.data().list){
+      SUBCATS=snap.data().list;
+      localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS));
+      renderSubcats(); updateSubcatSelect(); renderAll();
+    }
   });
 }
 
@@ -568,15 +584,15 @@ function renderSubcats(){
       <div class="subcat-name">${s.label}</div>
       <button class="bsm b-del" data-ri="${i}">🗑</button>
     </div>`).join('');
-  el.querySelectorAll('[data-ri]').forEach(btn=>btn.addEventListener('click',()=>{
-    SUBCATS.splice(Number(btn.dataset.ri),1); saveSubcats(); renderSubcats(); updateSubcatSelect();
+  el.querySelectorAll('[data-ri]').forEach(btn=>btn.addEventListener('click', async ()=>{
+    SUBCATS.splice(Number(btn.dataset.ri),1); await saveSubcats();
   }));
 }
-document.getElementById('btnAddSubcat').addEventListener('click',()=>{
+document.getElementById('btnAddSubcat').addEventListener('click', async ()=>{
   const inp=document.getElementById('newSubcatInput');
   const label=inp.value.trim(); if(!label) return;
   const key=label.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now();
-  SUBCATS.push({key,label}); saveSubcats(); renderSubcats(); updateSubcatSelect(); inp.value='';
+  SUBCATS.push({key,label}); await saveSubcats(); inp.value='';
 });
 
 /* ── CONFIRM DIALOG ── */
@@ -866,7 +882,7 @@ document.getElementById('catFilter').addEventListener('click',e=>{
 });
 
 /* ── INIT ── */
-loadSubcats();
+loadSubcatsLocal();
 rebuildDropdowns();
 if(sessionStorage.getItem('yk_auth')==='1'){
   document.getElementById('loginScreen').style.display='none';
