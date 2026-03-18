@@ -38,13 +38,9 @@
   .header-btns{display:flex;gap:7px}
   .btn-icon{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);width:36px;height:36px;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .15s}
   .btn-icon:hover{border-color:var(--yellow)}
-
-  /* NAV */
   .nav-tabs{display:flex;gap:0;border-bottom:1px solid var(--border)}
   .nav-tab{flex:1;padding:11px 8px;text-align:center;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s}
   .nav-tab.active{color:var(--yellow);border-bottom-color:var(--yellow)}
-
-  /* SECTIONS */
   .section{display:none;padding:14px 12px 90px}
   .section.active{display:block}
 
@@ -67,8 +63,6 @@
   .store-select{padding-left:34px}
   .store-select:focus,.form-select:focus{border-color:var(--yellow)}
   .store-select option,.form-select option{background:#1E1E1E}
-
-  /* SEARCH */
   .search-wrap{position:relative;margin-bottom:14px}
   .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
   .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
@@ -100,10 +94,9 @@
   .stock-item-info{flex:1;margin-right:12px}
   .stock-item-name{font-weight:600;font-size:13px}
   .stock-item-store{font-size:11px;color:var(--muted);margin-top:2px}
-  .stock-inline{display:flex;align-items:center;gap:8px}
-  .stock-inline-btn{width:32px;height:32px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text);font-size:18px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s}
-  .stock-inline-btn:hover{background:var(--yellow);color:#000;border-color:var(--yellow)}
-  .stock-inline-val{font-family:'Bebas Neue',sans-serif;font-size:18px;color:var(--yellow);min-width:32px;text-align:center}
+  .size-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
+  .size-chip{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
+  .size-chip.has{background:rgba(61,220,132,.12);border-color:rgba(61,220,132,.3);color:var(--success)}
 
   /* SETTINGS */
   .settings-group{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:16px}
@@ -111,11 +104,16 @@
   .settings-row{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;border-bottom:1px solid var(--border);gap:12px}
   .settings-row:last-child{border-bottom:none}
   .settings-row-label{font-size:14px;font-weight:500}
-  .settings-row-sub{font-size:11px;color:var(--muted);margin-top:2px}
   .settings-input{background:var(--surface2);border:1px solid var(--border);border-radius:6px;color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:7px 10px;outline:none;flex:1;min-width:0;transition:border-color .2s}
   .settings-input:focus{border-color:var(--yellow)}
 
-  /* Firebase status */
+  /* Подкатегории — управление */
+  .subcat-list{padding:0 16px 8px;display:flex;flex-direction:column;gap:6px}
+  .subcat-item{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)}
+  .subcat-item:last-child{border-bottom:none}
+  .subcat-item-name{flex:1;font-size:13px;font-weight:500}
+  .subcat-add-row{display:flex;gap:8px;padding:0 16px 12px}
+
   .fb-status{display:flex;align-items:center;gap:8px;padding:10px 16px;font-size:12px;font-weight:600;border-bottom:1px solid var(--border)}
   .fb-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
   .fb-dot.ok{background:var(--success)}
@@ -123,32 +121,24 @@
   .fb-dot.pulse{background:var(--yellow);animation:pulse 1s infinite}
   @keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
 
-  /* FAB */
   .fab{position:fixed;bottom:18px;right:14px;z-index:200}
   .fab-btn{display:flex;align-items:center;gap:8px;background:var(--yellow);color:#000;border:none;border-radius:50px;padding:13px 20px;font-family:'Onest',sans-serif;font-size:14px;font-weight:700;cursor:pointer;box-shadow:0 4px 24px rgba(245,200,0,.35);transition:transform .15s}
   .fab-btn:active{transform:scale(.95)}
 
-  /* MODAL */
   .overlay{position:fixed;inset:0;background:rgba(0,0,0,.82);z-index:300;display:none;align-items:flex-end;backdrop-filter:blur(6px)}
   .overlay.open{display:flex}
   .modal{background:var(--surface);border-radius:16px 16px 0 0;border-top:2px solid var(--yellow);width:100%;max-height:92vh;overflow-y:auto;padding:18px 16px 44px;animation:slideUp .25s ease}
   @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
   .modal-handle{width:38px;height:3px;background:var(--border);border-radius:2px;margin:0 auto 16px}
   .modal-title{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--yellow);margin-bottom:18px}
-
   .form-textarea{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:14px;padding:10px 12px;outline:none;resize:vertical;min-height:60px;transition:border-color .2s}
   .form-textarea:focus{border-color:var(--yellow)}
   .form-row{display:flex;gap:10px}
   .form-row .form-group{flex:1}
 
-  /* SIZE GRID — admin modal */
   .size-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:6px}
   .size-btn{padding:9px 4px;border-radius:8px;border:1.5px solid var(--border);background:var(--surface2);color:var(--muted);font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;text-align:center;transition:all .2s;user-select:none}
   .size-btn.active{background:var(--yellow);border-color:var(--yellow);color:#000}
-  /* SIZE — stock tab */
-  .size-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:6px}
-  .size-chip{padding:3px 8px;border-radius:6px;font-size:10px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted)}
-  .size-chip.has{background:rgba(61,220,132,.12);border-color:rgba(61,220,132,.3);color:var(--success)}
 
   .img-picker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
   .img-option{background:var(--surface2);border:2px solid var(--border);border-radius:var(--radius-sm);padding:12px 8px;text-align:center;cursor:pointer;transition:all .2s}
@@ -156,7 +146,6 @@
   .img-option-icon{font-size:22px;margin-bottom:5px}
   .img-option-label{font-size:11px;font-weight:600;color:var(--muted)}
   .img-option.selected .img-option-label{color:var(--yellow)}
-
   .photo-search-row{display:flex;gap:8px;margin-top:8px}
   .btn-search-photo{background:var(--yellow);color:#000;border:none;border-radius:var(--radius-sm);padding:9px 14px;font-family:'Onest',sans-serif;font-size:12px;font-weight:700;cursor:pointer;white-space:nowrap;flex-shrink:0}
   .photo-results{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:8px;max-height:200px;overflow-y:auto}
@@ -169,18 +158,15 @@
   .upload-zone-text{color:var(--muted);font-size:13px}
   .upload-zone-hint{color:var(--muted);font-size:11px;margin-top:4px}
   #fileInput{display:none}
-
   .btn-primary{width:100%;background:var(--yellow);color:#000;border:none;border-radius:var(--radius-sm);padding:13px;font-family:'Onest',sans-serif;font-size:15px;font-weight:700;cursor:pointer;transition:opacity .2s;margin-top:8px}
   .btn-primary:active{opacity:.85}
   .btn-secondary{width:100%;background:transparent;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px;transition:background .15s}
   .btn-secondary:hover{background:var(--surface2)}
   .btn-danger-full{width:100%;background:rgba(255,68,68,.1);color:var(--danger);border:1px solid rgba(255,68,68,.25);border-radius:var(--radius-sm);padding:12px;font-family:'Onest',sans-serif;font-size:14px;cursor:pointer;margin-top:8px;font-weight:600}
-
   .empty{text-align:center;padding:60px 20px;color:var(--muted)}
   .empty-icon{font-size:48px;margin-bottom:12px}
   .empty-text{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px;letter-spacing:1px}
   .empty-sub{font-size:13px}
-
   ::-webkit-scrollbar{width:3px}
   ::-webkit-scrollbar-track{background:transparent}
   ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
@@ -199,14 +185,8 @@
     </div>
     <div class="login-heading">Вход для администратора</div>
     <div class="login-desc">Введите логин и пароль для доступа</div>
-    <div class="form-group">
-      <label class="form-label">Логин</label>
-      <input class="form-input" id="loginInput" type="text" placeholder="Логин" autocomplete="username">
-    </div>
-    <div class="form-group">
-      <label class="form-label">Пароль</label>
-      <input class="form-input" id="passInput" type="password" placeholder="Пароль" autocomplete="current-password">
-    </div>
+    <div class="form-group"><label class="form-label">Логин</label><input class="form-input" id="loginInput" type="text" placeholder="Логин" autocomplete="username"></div>
+    <div class="form-group"><label class="form-label">Пароль</label><input class="form-input" id="passInput" type="password" placeholder="Пароль" autocomplete="current-password"></div>
     <button class="btn-login" onclick="doLogin()">Войти</button>
     <div class="login-error" id="loginError">Неверный логин или пароль</div>
   </div>
@@ -244,8 +224,7 @@
       </div>
     </div>
     <div class="filter-bar" id="catFilter">
-      <button class="filter-chip active" data-cat="all">Всё</button>
-      <button class="filter-chip" data-cat="shoes">Обувь</button>
+      <button class="filter-chip active" data-cat="shoes">Обувь</button>
       <button class="filter-chip" data-cat="clothes">Одежда</button>
       <button class="filter-chip" data-cat="accessories">Аксессуары</button>
     </div>
@@ -269,7 +248,6 @@
 
   <!-- SETTINGS -->
   <div class="section" id="tab-settings">
-
     <div class="settings-group">
       <div class="settings-header">🔥 Firebase</div>
       <div class="fb-status" id="fbStatus">
@@ -288,6 +266,15 @@
     </div>
 
     <div class="settings-group">
+      <div class="settings-header">👕 Подкатегории одежды</div>
+      <div class="subcat-list" id="subcatList"></div>
+      <div class="subcat-add-row">
+        <input class="form-input" id="newSubcatInput" placeholder="Название подкатегории" style="flex:1">
+        <button class="btn-primary" style="width:auto;padding:10px 16px;margin-top:0" onclick="addSubcat()">＋</button>
+      </div>
+    </div>
+
+    <div class="settings-group">
       <div class="settings-header">🔐 Смена пароля</div>
       <div class="settings-row" style="flex-direction:column;align-items:stretch;gap:10px">
         <input class="form-input" id="newLogin" placeholder="Новый логин">
@@ -296,7 +283,7 @@
       </div>
     </div>
 
-    <button class="btn-danger-full" onclick="if(confirm('Удалить ВСЕ товары? Это действие необратимо!')){deleteAllProducts()}">🗑 Удалить все товары</button>
+    <button class="btn-danger-full" onclick="if(confirm('Удалить ВСЕ товары?')){deleteAllProducts()}">🗑 Удалить все товары</button>
   </div>
 
   <div class="fab" id="fab">
@@ -311,13 +298,25 @@
     <div class="modal-title" id="modalTitle">Новый товар</div>
     <div class="form-group"><label class="form-label">Название</label><input class="form-input" id="fieldName" placeholder="Например: Кроссовки Nike Air Max"></div>
     <div class="form-row">
-      <div class="form-group"><label class="form-label">Категория</label><select class="form-select" id="fieldCat"><option value="shoes">Обувь</option><option value="clothes">Одежда</option><option value="accessories">Аксессуары</option></select></div>
+      <div class="form-group">
+        <label class="form-label">Категория</label>
+        <select class="form-select" id="fieldCat" onchange="updateSubcatOptions()">
+          <option value="shoes">Обувь</option>
+          <option value="clothes">Одежда</option>
+          <option value="accessories">Аксессуары</option>
+        </select>
+      </div>
       <div class="form-group"><label class="form-label">Цена (₽)</label><input class="form-input" id="fieldPrice" type="number" placeholder="0"></div>
+    </div>
+    <!-- Подкатегория — только для одежды -->
+    <div class="form-group" id="subcatGroup" style="display:none">
+      <label class="form-label">Подкатегория одежды</label>
+      <select class="form-select" id="fieldSubcat"></select>
     </div>
     <div class="form-group"><label class="form-label">Магазин</label><select class="form-select" id="fieldStore"></select></div>
     <div class="form-group"><label class="form-label">Описание</label><textarea class="form-textarea" id="fieldDesc" placeholder="Краткое описание..."></textarea></div>
     <div class="form-group">
-      <label class="form-label">Размеры в наличии (нажмите чтобы выбрать)</label>
+      <label class="form-label">Размеры в наличии</label>
       <div class="size-grid" id="sizeGrid"></div>
     </div>
     <div class="form-group">
@@ -349,14 +348,10 @@
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, writeBatch } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// ═══════════════════════════════════════
-// FIREBASE CONFIG
-// ═══════════════════════════════════════
 const firebaseConfig = {
   apiKey: "AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
   authDomain: "yellow-rabbit-shop.firebaseapp.com",
@@ -369,27 +364,28 @@ const firebaseConfig = {
 const fbApp = initializeApp(firebaseConfig);
 const db = getFirestore(fbApp);
 
-// ═══════════════════════════════════════
-// CREDENTIALS (хранятся локально)
-// ═══════════════════════════════════════
 const DEFAULT_LOGIN = 'EasyShop39!';
 const DEFAULT_PASS  = 'Xk#7m2@Pq9!';
+function getCredentials(){ try{ const c=localStorage.getItem('yk_credentials'); if(c) return JSON.parse(c); }catch(e){} return {login:DEFAULT_LOGIN,pass:DEFAULT_PASS}; }
+function saveCredentials(obj){ localStorage.setItem('yk_credentials',JSON.stringify(obj)); }
 
-function getCredentials(){
-  try{ const c=localStorage.getItem('yk_credentials'); if(c) return JSON.parse(c); }catch(e){}
-  return {login:DEFAULT_LOGIN, pass:DEFAULT_PASS};
-}
-function saveCredentials(obj){ localStorage.setItem('yk_credentials', JSON.stringify(obj)); }
-
-// ═══════════════════════════════════════
-// STATE
-// ═══════════════════════════════════════
 const CAT_LABELS = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
 const CAT_ICONS  = {shoes:'👟',clothes:'👕',accessories:'👜'};
+const ALL_SIZES_MODAL = [36,37,38,39,40,41,42,43,44,45,46];
+
+// Подкатегории — хранятся локально, можно расширять
+let SUBCATS = [
+  {key:'suits',    label:'Костюмы'},
+  {key:'sport_pants', label:'Спорт. штаны'},
+  {key:'jeans',    label:'Джинсы'},
+  {key:'outerwear',label:'Верхняя одежда'}
+];
+function loadSubcats(){ try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){} }
+function saveSubcats(){ localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); }
 
 let products = [];
 let STORES = {'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
-let currentCat = 'all';
+let currentCat = 'shoes';
 let editingId = null;
 let imgMode = 'url';
 let uploadedImgData = null;
@@ -398,135 +394,69 @@ let selectedSizes = [];
 let unsubscribeProducts = null;
 let unsubscribeSettings = null;
 
-// ═══════════════════════════════════════
-// FIREBASE STATUS
-// ═══════════════════════════════════════
-function setFbStatus(state, text){
-  const dot = document.getElementById('fbDot');
-  const txt = document.getElementById('fbStatusText');
-  dot.className = 'fb-dot ' + state;
-  txt.textContent = text;
-}
+function setFbStatus(s,t){ document.getElementById('fbDot').className='fb-dot '+s; document.getElementById('fbStatusText').textContent=t; }
 
-// ═══════════════════════════════════════
-// FIRESTORE — REAL-TIME LISTENERS
-// ═══════════════════════════════════════
 function startListeners(){
-  // Products listener
-  unsubscribeProducts = onSnapshot(
-    collection(db,'products'),
-    (snap) => {
-      products = snap.docs.map(d => ({id: d.id, ...d.data()}));
-      products.sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
-      setFbStatus('ok','Подключено — данные синхронизируются');
-      renderAll();
-    },
-    (err) => {
-      console.error(err);
-      setFbStatus('err','Ошибка подключения: ' + err.code);
-    }
+  unsubscribeProducts = onSnapshot(collection(db,'products'),
+    snap=>{ products=snap.docs.map(d=>({id:d.id,...d.data()})); products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); setFbStatus('ok','Подключено — данные синхронизируются'); renderAll(); },
+    err=>{ setFbStatus('err','Ошибка: '+err.code); }
   );
-
-  // Settings listener (stores addresses)
-  unsubscribeSettings = onSnapshot(
-    doc(db,'settings','stores'),
-    (snap) => {
-      if(snap.exists()){
-        STORES = snap.data();
-        fillAddressFields();
-        rebuildStoreDropdowns();
-        renderAll();
-      }
-    }
-  );
+  unsubscribeSettings = onSnapshot(doc(db,'settings','stores'), snap=>{ if(snap.exists()){ STORES=snap.data(); fillAddressFields(); rebuildStoreDropdowns(); renderAll(); } });
 }
 
-// ═══════════════════════════════════════
-// FIRESTORE — WRITE
-// ═══════════════════════════════════════
-async function fbSaveProduct(p){
-  await setDoc(doc(db,'products', String(p.id)), p);
-}
-
-async function fbDeleteProduct(id){
-  await deleteDoc(doc(db,'products', String(id)));
-}
-
-async function fbSaveStores(){
-  await setDoc(doc(db,'settings','stores'), STORES);
-}
-
-async function fbDeleteAll(){
-  const snap = await getDocs(collection(db,'products'));
-  const batch = writeBatch(db);
-  snap.docs.forEach(d => batch.delete(d.ref));
-  await batch.commit();
-}
-
-// ═══════════════════════════════════════
-// LOGIN
-// ═══════════════════════════════════════
 function doLogin(){
-  const creds = getCredentials();
-  const l = document.getElementById('loginInput').value.trim();
-  const p = document.getElementById('passInput').value;
-  if(l === creds.login && p === creds.pass){
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').style.display = 'block';
+  const creds=getCredentials();
+  const l=document.getElementById('loginInput').value.trim();
+  const p=document.getElementById('passInput').value;
+  if(l===creds.login&&p===creds.pass){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('app').style.display='block';
     sessionStorage.setItem('yk_auth','1');
-    fillAddressFields();
-    rebuildStoreDropdowns();
-    startListeners();
+    fillAddressFields(); rebuildStoreDropdowns(); renderSubcatSettings(); startListeners();
   } else {
-    document.getElementById('loginError').style.display = 'block';
-    document.getElementById('passInput').value = '';
+    document.getElementById('loginError').style.display='block';
+    document.getElementById('passInput').value='';
   }
 }
-
 function doLogout(){
   if(unsubscribeProducts) unsubscribeProducts();
   if(unsubscribeSettings) unsubscribeSettings();
   sessionStorage.removeItem('yk_auth');
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('app').style.display = 'none';
-  document.getElementById('loginInput').value = '';
-  document.getElementById('passInput').value = '';
+  document.getElementById('loginScreen').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('loginInput').value='';
+  document.getElementById('passInput').value='';
 }
+document.getElementById('passInput').addEventListener('keydown',e=>{ if(e.key==='Enter') doLogin(); });
+document.getElementById('loginInput').addEventListener('keydown',e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
+window.doLogin=doLogin; window.doLogout=doLogout;
 
-document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==='Enter') doLogin(); });
-document.getElementById('loginInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
-window.doLogin = doLogin;
-window.doLogout = doLogout;
-
-// ═══════════════════════════════════════
-// TABS
-// ═══════════════════════════════════════
 function switchTab(tab){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('active',t.dataset.tab===tab));
   document.querySelectorAll('.section').forEach(s=>s.classList.toggle('active',s.id==='tab-'+tab));
-  document.getElementById('fab').style.display = tab==='products'?'block':'none';
+  document.getElementById('fab').style.display=tab==='products'?'block':'none';
   if(tab==='stock') renderStock();
+  if(tab==='settings') renderSubcatSettings();
 }
-window.switchTab = switchTab;
+window.switchTab=switchTab;
 
-// ═══════════════════════════════════════
-// RENDER
-// ═══════════════════════════════════════
 function renderStats(){
-  const total = products.length;
-  const out = products.filter(p=>!p.sizes||p.sizes.length===0).length;
-  const cats = new Set(products.map(p=>p.cat)).size;
-  document.getElementById('statsRow').innerHTML =
+  const total=products.length;
+  const out=products.filter(p=>!p.sizes||p.sizes.length===0).length;
+  const cats=new Set(products.map(p=>p.cat)).size;
+  document.getElementById('statsRow').innerHTML=
     `<div class="stat-card"><div class="stat-val">${total}</div><div class="stat-label">Товаров</div></div>
      <div class="stat-card"><div class="stat-val">${cats}</div><div class="stat-label">Категорий</div></div>
      <div class="stat-card"><div class="stat-val" style="color:${out>0?'#FF4444':'#3DDC84'}">${out}</div><div class="stat-label">Нет размеров</div></div>`;
 }
 
+function getSubcatLabel(key){ const s=SUBCATS.find(x=>x.key===key); return s?s.label:''; }
+
 function getFiltered(){
-  const q = document.getElementById('searchInput').value.toLowerCase();
-  const store = document.getElementById('storeFilter').value;
+  const q=document.getElementById('searchInput').value.toLowerCase();
+  const store=document.getElementById('storeFilter').value;
   return products.filter(p=>
-    (currentCat==='all'||p.cat===currentCat) &&
+    p.cat===currentCat &&
     (store==='all'||p.store===store) &&
     (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q))
   );
@@ -534,19 +464,17 @@ function getFiltered(){
 
 function renderProducts(){
   renderStats();
-  const list = document.getElementById('productList');
-  const filtered = getFiltered();
-  if(!filtered.length){
-    list.innerHTML=`<div class="empty"><div class="empty-icon">🐇</div><div class="empty-text">Нет товаров</div><div class="empty-sub">Добавьте первый товар</div></div>`;
-    return;
-  }
-  list.innerHTML = filtered.map(p=>{
-    const sc = (!p.sizes||p.sizes.length===0)?'color:var(--danger)':p.sizes.length<=3?'color:var(--yellow)':'color:var(--success)';
+  const list=document.getElementById('productList');
+  const filtered=getFiltered();
+  if(!filtered.length){ list.innerHTML=`<div class="empty"><div class="empty-icon">🐇</div><div class="empty-text">Нет товаров</div><div class="empty-sub">Добавьте первый товар</div></div>`; return; }
+  list.innerHTML=filtered.map(p=>{
+    const sc=(!p.sizes||p.sizes.length===0)?'color:var(--danger)':p.sizes.length<=3?'color:var(--yellow)':'color:var(--success)';
+    const sub=p.subcat?` · ${getSubcatLabel(p.subcat)}`:'';
     return `<div class="product-row">
       ${p.img?`<img class="product-row-img" src="${p.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
       <div class="product-row-img-ph" style="${p.img?'display:none':''}">${CAT_ICONS[p.cat]||'📦'}</div>
       <div class="product-row-info">
-        <div class="product-row-cat">${CAT_LABELS[p.cat]||p.cat}</div>
+        <div class="product-row-cat">${CAT_LABELS[p.cat]||p.cat}${sub}</div>
         <div class="product-row-name">${p.name}</div>
         <div class="product-row-meta">
           <div class="product-row-price">${Number(p.price).toLocaleString('ru')} ₽</div>
@@ -563,23 +491,16 @@ function renderProducts(){
 }
 
 function renderStock(){
-  const storeF = document.getElementById('stockStoreFilter').value;
-  const filtered = products.filter(p=>storeF==='all'||p.store===storeF);
-  const sec = document.getElementById('stockSection');
-  if(!filtered.length){
-    sec.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Нет товаров</div></div>`;
-    return;
-  }
-  const ALL_SIZES=[36,37,38,39,40,41,42,43,44,45,46];
-  sec.innerHTML = `<div class="stock-card">${filtered.map(p=>{
+  const storeF=document.getElementById('stockStoreFilter').value;
+  const filtered=products.filter(p=>storeF==='all'||p.store===storeF);
+  const sec=document.getElementById('stockSection');
+  if(!filtered.length){ sec.innerHTML=`<div class="empty"><div class="empty-icon">📦</div><div class="empty-text">Нет товаров</div></div>`; return; }
+  sec.innerHTML=`<div class="stock-card">${filtered.map(p=>{
     const sizes=p.sizes||[];
-    const chips=ALL_SIZES.map(s=>`<span class="size-chip ${sizes.includes(s)?'has':''}">${s}</span>`).join('');
+    const chips=ALL_SIZES_MODAL.map(s=>`<span class="size-chip ${sizes.includes(s)?'has':''}">${s}</span>`).join('');
     return `<div class="stock-item-row" style="flex-direction:column;align-items:flex-start;gap:8px">
       <div style="display:flex;align-items:center;justify-content:space-between;width:100%">
-        <div class="stock-item-info">
-          <div class="stock-item-name">${p.name}</div>
-          <div class="stock-item-store">📍 ${STORES[p.store]||''}</div>
-        </div>
+        <div class="stock-item-info"><div class="stock-item-name">${p.name}</div><div class="stock-item-store">📍 ${STORES[p.store]||''}</div></div>
         <button class="btn-sm btn-edit" onclick="openEdit('${p.id}')" style="flex-shrink:0">✏️</button>
       </div>
       <div class="size-chips">${chips}</div>
@@ -588,25 +509,39 @@ function renderStock(){
 }
 
 function renderAll(){ renderProducts(); }
+window.renderProducts=renderProducts;
 
-window.renderProducts = renderProducts;
+// SUBCATS SETTINGS
+function renderSubcatSettings(){
+  const list=document.getElementById('subcatList');
+  if(!list) return;
+  list.innerHTML=SUBCATS.map((s,i)=>`
+    <div class="subcat-item">
+      <div class="subcat-item-name">${s.label}</div>
+      <button class="btn-sm btn-del" onclick="removeSubcat(${i})">🗑</button>
+    </div>`).join('');
+}
+window.removeSubcat=function(i){
+  SUBCATS.splice(i,1); saveSubcats(); renderSubcatSettings(); updateSubcatOptions();
+};
+window.addSubcat=function(){
+  const input=document.getElementById('newSubcatInput');
+  const label=input.value.trim(); if(!label) return;
+  const key=label.toLowerCase().replace(/\s+/g,'_').replace(/[^a-z0-9_]/g,'')+'_'+Date.now();
+  SUBCATS.push({key,label}); saveSubcats(); renderSubcatSettings(); updateSubcatOptions();
+  input.value='';
+};
 
-// ═══════════════════════════════════════
-// STOCK CHANGE
-// ═══════════════════════════════════════
-// changeStock removed — sizes used instead
-
-// ═══════════════════════════════════════
-// PRODUCT CRUD
-// ═══════════════════════════════════════
+// MODAL
 function openModal(){
   editingId=null;
   document.getElementById('modalTitle').textContent='Новый товар';
   document.getElementById('fieldName').value='';
   document.getElementById('fieldCat').value='shoes';
+  document.getElementById('fieldSubcat').value='';
+  document.getElementById('subcatGroup').style.display='none';
   document.getElementById('fieldPrice').value='';
-  if(document.getElementById('fieldStore').options.length>0)
-    document.getElementById('fieldStore').selectedIndex=0;
+  if(document.getElementById('fieldStore').options.length>0) document.getElementById('fieldStore').selectedIndex=0;
   document.getElementById('fieldDesc').value='';
   buildSizeGrid([]);
   uploadedImgData=null; selectedSearchImg=null;
@@ -625,6 +560,8 @@ function openEdit(id){
   document.getElementById('modalTitle').textContent='Редактировать товар';
   document.getElementById('fieldName').value=p.name;
   document.getElementById('fieldCat').value=p.cat;
+  updateSubcatOptions();
+  document.getElementById('fieldSubcat').value=p.subcat||'';
   document.getElementById('fieldPrice').value=p.price;
   document.getElementById('fieldStore').value=p.store;
   document.getElementById('fieldDesc').value=p.desc||'';
@@ -649,67 +586,54 @@ function openEdit(id){
 function closeModal(){ document.getElementById('addOverlay').classList.remove('open'); }
 
 async function saveProduct(){
-  const name=document.getElementById('fieldName').value.trim();
-  if(!name){ alert('Введите название'); return; }
+  const name=document.getElementById('fieldName').value.trim(); if(!name){ alert('Введите название'); return; }
   const cat=document.getElementById('fieldCat').value;
+  const subcat=cat==='clothes'?document.getElementById('fieldSubcat').value:'';
   const price=parseInt(document.getElementById('fieldPrice').value)||0;
   const store=document.getElementById('fieldStore').value;
   const desc=document.getElementById('fieldDesc').value.trim();
   let img='';
   if(imgMode==='upload'&&uploadedImgData) img=uploadedImgData;
   else if(imgMode==='url') img=selectedSearchImg||document.getElementById('photoSearch').value.trim();
-
-  const id = editingId || ('p_'+Date.now());
-  const existing = editingId ? products.find(p=>p.id===editingId) : null;
-  const productData = {
-    id, name, cat, price, store, sizes: [...selectedSizes].sort((a,b)=>a-b), desc, img,
-    createdAt: existing?.createdAt || Date.now()
-  };
+  const id=editingId||('p_'+Date.now());
+  const existing=editingId?products.find(p=>p.id===editingId):null;
+  const productData={id,name,cat,subcat,price,store,sizes:[...selectedSizes].sort((a,b)=>a-b),desc,img,createdAt:existing?.createdAt||Date.now()};
   closeModal();
-  await fbSaveProduct(productData);
+  await setDoc(doc(db,'products',String(id)),productData);
 }
 
-async function delProduct(id){
-  if(!confirm('Удалить товар?')) return;
-  await fbDeleteProduct(id);
+async function delProduct(id){ if(!confirm('Удалить товар?')) return; await deleteDoc(doc(db,'products',String(id))); }
+async function deleteAllProducts(){ const snap=await getDocs(collection(db,'products')); const batch=writeBatch(db); snap.docs.forEach(d=>batch.delete(d.ref)); await batch.commit(); }
+
+window.openModal=openModal; window.openEdit=openEdit; window.closeModal=closeModal;
+window.saveProduct=saveProduct; window.delProduct=delProduct; window.deleteAllProducts=deleteAllProducts;
+
+// SUBCAT в модалке
+function updateSubcatOptions(){
+  const cat=document.getElementById('fieldCat').value;
+  const group=document.getElementById('subcatGroup');
+  group.style.display=cat==='clothes'?'block':'none';
+  const sel=document.getElementById('fieldSubcat');
+  sel.innerHTML='<option value="">— Без подкатегории —</option>'+
+    SUBCATS.map(s=>`<option value="${s.key}">${s.label}</option>`).join('');
 }
+window.updateSubcatOptions=updateSubcatOptions;
 
-async function deleteAllProducts(){
-  await fbDeleteAll();
-}
-
-window.openModal = openModal;
-window.openEdit = openEdit;
-window.closeModal = closeModal;
-window.saveProduct = saveProduct;
-window.delProduct = delProduct;
-window.deleteAllProducts = deleteAllProducts;
-
-// ═══════════════════════════════════════
-// STOCK MODAL CONTROLS
-// ═══════════════════════════════════════
-// Size grid init
-const ALL_SIZES_MODAL=[36,37,38,39,40,41,42,43,44,45,46];
+// SIZE GRID
 function buildSizeGrid(active=[]){
   selectedSizes=[...active];
   const grid=document.getElementById('sizeGrid');
-  grid.innerHTML=ALL_SIZES_MODAL.map(s=>`
-    <button type="button" class="size-btn${selectedSizes.includes(s)?' active':''}" onclick="toggleSize(${s})">${s}</button>
-  `).join('');
+  grid.innerHTML=ALL_SIZES_MODAL.map(s=>`<button type="button" class="size-btn${selectedSizes.includes(s)?' active':''}" onclick="toggleSize(${s})">${s}</button>`).join('');
 }
 function toggleSize(s){
   const idx=selectedSizes.indexOf(s);
   if(idx>-1) selectedSizes.splice(idx,1); else selectedSizes.push(s);
   selectedSizes.sort((a,b)=>a-b);
-  document.querySelectorAll('#sizeGrid .size-btn').forEach(btn=>{
-    btn.classList.toggle('active', selectedSizes.includes(Number(btn.textContent)));
-  });
+  document.querySelectorAll('#sizeGrid .size-btn').forEach(btn=>btn.classList.toggle('active',selectedSizes.includes(Number(btn.textContent))));
 }
 window.toggleSize=toggleSize;
 
-// ═══════════════════════════════════════
-// IMG MODE
-// ═══════════════════════════════════════
+// IMG
 function switchImgMode(mode){
   imgMode=mode;
   document.getElementById('optUrl').classList.toggle('selected',mode==='url');
@@ -718,7 +642,7 @@ function switchImgMode(mode){
   document.getElementById('uploadMode').style.display=mode==='upload'?'':'none';
   document.getElementById('uploadZone').style.display=mode==='upload'?'block':'none';
 }
-window.switchImgMode = switchImgMode;
+window.switchImgMode=switchImgMode;
 
 function searchPhotos(){
   const q=document.getElementById('photoSearch').value.trim(); if(!q) return;
@@ -729,14 +653,14 @@ function searchPhotos(){
   const imgs=Array.from({length:6},(_,i)=>`https://source.unsplash.com/200x200/?${kw}&sig=${Date.now()+i*17}`);
   wrap.innerHTML=`<div class="photo-results">${imgs.map(src=>`<img class="photo-thumb" src="${src}" data-src="${src}" onclick="selectPhoto(this)" onerror="this.style.display='none'">`).join('')}</div>`;
 }
-window.searchPhotos = searchPhotos;
+window.searchPhotos=searchPhotos;
 
 function selectPhoto(el){
   document.querySelectorAll('.photo-thumb').forEach(t=>t.classList.remove('selected'));
   el.classList.add('selected'); selectedSearchImg=el.dataset.src;
   const prev=document.getElementById('imgPreviewUrl'); prev.src=selectedSearchImg; prev.style.display='block';
 }
-window.selectPhoto = selectPhoto;
+window.selectPhoto=selectPhoto;
 
 document.getElementById('fileInput').addEventListener('change',function(e){
   const file=e.target.files[0]; if(!file) return;
@@ -744,47 +668,38 @@ document.getElementById('fileInput').addEventListener('change',function(e){
   fr.onload=ev=>{ uploadedImgData=ev.target.result; const prev=document.getElementById('imgPreviewUpload'); prev.src=uploadedImgData; prev.style.display='block'; };
   fr.readAsDataURL(file);
 });
-
 document.getElementById('photoSearch').addEventListener('blur',function(){
   const val=this.value.trim();
   if(val.startsWith('http')){ selectedSearchImg=val; const prev=document.getElementById('imgPreviewUrl'); prev.src=val; prev.style.display='block'; }
 });
 
-// ═══════════════════════════════════════
 // SETTINGS
-// ═══════════════════════════════════════
 async function saveAddresses(){
   STORES['1']=document.getElementById('addr1').value.trim()||STORES['1'];
   STORES['2']=document.getElementById('addr2').value.trim()||STORES['2'];
   STORES['3']=document.getElementById('addr3').value.trim()||STORES['3'];
   STORES['4']=document.getElementById('addr4').value.trim()||STORES['4'];
-  await fbSaveStores();
-  // Поля и дропдауны обновятся автоматически через onSnapshot
-  alert('✅ Адреса сохранены и синхронизированы');
+  await setDoc(doc(db,'settings','stores'),STORES);
+  alert('✅ Адреса сохранены');
 }
-window.saveAddresses = saveAddresses;
+window.saveAddresses=saveAddresses;
 
 function changeCredentials(){
   const l=document.getElementById('newLogin').value.trim();
   const p=document.getElementById('newPass').value;
   if(!l||!p){ alert('Заполните оба поля'); return; }
-  saveCredentials({login:l, pass:p});
-  document.getElementById('newLogin').value='';
-  document.getElementById('newPass').value='';
+  saveCredentials({login:l,pass:p});
+  document.getElementById('newLogin').value=''; document.getElementById('newPass').value='';
   alert('✅ Данные для входа обновлены');
 }
-window.changeCredentials = changeCredentials;
+window.changeCredentials=changeCredentials;
 
-// ═══════════════════════════════════════
-// HELPERS
-// ═══════════════════════════════════════
 function fillAddressFields(){
   document.getElementById('addr1').value=STORES['1']||'';
   document.getElementById('addr2').value=STORES['2']||'';
   document.getElementById('addr3').value=STORES['3']||'';
   document.getElementById('addr4').value=STORES['4']||'';
 }
-
 function rebuildStoreDropdowns(){
   const allOpt='<option value="all">Все магазины</option>';
   const opts=Object.entries(STORES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
@@ -793,32 +708,24 @@ function rebuildStoreDropdowns(){
   document.getElementById('fieldStore').innerHTML=opts;
 }
 
-// ═══════════════════════════════════════
-// CAT FILTER
-// ═══════════════════════════════════════
 document.getElementById('catFilter').addEventListener('click',e=>{
   if(!e.target.classList.contains('filter-chip')) return;
   currentCat=e.target.dataset.cat;
   document.querySelectorAll('.filter-chip').forEach(c=>c.classList.toggle('active',c.dataset.cat===currentCat));
   renderProducts();
 });
-
 document.getElementById('addOverlay').addEventListener('click',e=>{ if(e.target===e.currentTarget) closeModal(); });
 
-// ═══════════════════════════════════════
 // INIT
-// ═══════════════════════════════════════
+loadSubcats();
 rebuildStoreDropdowns();
-
 if(sessionStorage.getItem('yk_auth')==='1'){
   document.getElementById('loginScreen').style.display='none';
   document.getElementById('app').style.display='block';
-  fillAddressFields();
-  startListeners();
+  fillAddressFields(); renderSubcatSettings(); startListeners();
 } else {
   setFbStatus('pulse','Ожидание входа...');
 }
-
 </script>
 </body>
 </html>
