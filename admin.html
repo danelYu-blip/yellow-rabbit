@@ -372,7 +372,7 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 <!-- ══ FIREBASE + LOGIC ══ -->
 <script type="module">
 import { initializeApp }    from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, deleteDoc, onSnapshot, getDocs, writeBatch }
+import { getFirestore, collection, doc, setDoc, deleteDoc, getDoc, onSnapshot, getDocs, writeBatch }
                              from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ── CONFIG ── */
@@ -415,12 +415,30 @@ let curCat='shoes', editId=null, imgMode='url', upData=null, selImg=null, selSiz
 let unsubP=null, unsubS=null;
 
 /* ── CREDENTIALS ── */
-function getCreds(){ try{ const c=localStorage.getItem('yk_creds'); if(c) return JSON.parse(c); }catch(e){} return {login:D_LOGIN,pass:D_PASS}; }
-function saveCreds(o){ localStorage.setItem('yk_creds',JSON.stringify(o)); }
+function getCreds(){
+  try{ const c=localStorage.getItem('yk_creds'); if(c) return JSON.parse(c); }catch(e){}
+  return {login:D_LOGIN, pass:D_PASS};
+}
+// ── CREDENTIALS в Firebase ──
+async function loadCredsFromFB(){
+  try{
+    const snap=await getDoc(doc(db,'settings','credentials'));
+    if(snap.exists()){
+      const d=snap.data();
+      if(d.login&&d.pass)
+        localStorage.setItem('yk_creds',JSON.stringify({login:d.login,pass:d.pass}));
+    }
+  }catch(e){ console.warn('loadCredsFromFB:',e); }
+}
+async function saveCredsToFB(login,pass){
+  await setDoc(doc(db,'settings','credentials'),{login,pass});
+  localStorage.setItem('yk_creds',JSON.stringify({login,pass}));
+}
+
 // Подкатегории хранятся в Firebase (doc settings/subcats)
 async function saveSubcats(){
   await setDoc(doc(db,'settings','subcats'),{list:SUBCATS});
-  localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS)); // кэш для быстрой загрузки
+  localStorage.setItem('yk_subcats',JSON.stringify(SUBCATS));
 }
 function loadSubcatsLocal(){
   try{ const s=localStorage.getItem('yk_subcats'); if(s) SUBCATS=JSON.parse(s); }catch(e){}
@@ -460,7 +478,9 @@ document.getElementById('passInput').addEventListener('keydown', e=>{ if(e.key==
 document.getElementById('loginInput').addEventListener('keydown', e=>{ if(e.key==='Enter') document.getElementById('passInput').focus(); });
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 
-function doLogin(){
+async function doLogin(){
+  // Сначала подгружаем актуальные данные из Firebase
+  await loadCredsFromFB();
   const {login,pass}=getCreds();
   const l=document.getElementById('loginInput').value.trim();
   const p=document.getElementById('passInput').value;
@@ -852,11 +872,11 @@ document.getElementById('btnSaveAddr').addEventListener('click', async()=>{
   await setDoc(doc(db,'settings','stores'),STORES);
   alert('✅ Адреса сохранены');
 });
-document.getElementById('btnChangeCreds').addEventListener('click',()=>{
+document.getElementById('btnChangeCreds').addEventListener('click', async ()=>{
   const l=document.getElementById('newLogin').value.trim();
   const p=document.getElementById('newPass').value;
   if(!l||!p){ alert('Заполните оба поля'); return; }
-  saveCreds({login:l,pass:p});
+  await saveCredsToFB(l,p);
   document.getElementById('newLogin').value=''; document.getElementById('newPass').value='';
   alert('✅ Данные для входа обновлены');
 });
