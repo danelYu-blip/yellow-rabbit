@@ -401,8 +401,7 @@ function fbSt(cls,txt){ document.getElementById('fbDot').className='fb-dot '+cls
 
 /* ── LISTENERS ── */
 function startListeners(){
-  unsubP = onSnapshot(collection(db,'products'),{includeMetadataChanges:true}, snap=>{
-    if(snap.metadata.fromCache) return;
+  unsubP = onSnapshot(collection(db,'products'), snap=>{
     products = snap.docs.map(d=>({id:d.id,...d.data()}));
     products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
     fbSt('ok','Подключено — синхронизируется');
@@ -506,7 +505,14 @@ function renderProducts(){
   list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>openEdit(btn.dataset.edit)));
   list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>showConfirm(
     'Удалить товар?','Товар будет удалён из каталога',
-    ()=>deleteDoc(doc(db,'products',String(btn.dataset.del)))
+    ()=>{
+      const id=String(btn.dataset.del);
+      // Сразу убираем из локального массива — UI не мигает
+      products=products.filter(p=>p.id!==id);
+      renderAll();
+      // Затем удаляем в Firebase
+      return deleteDoc(doc(db,'products',id));
+    }
   )));
 }
 
