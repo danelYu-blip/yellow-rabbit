@@ -406,7 +406,7 @@ function getSizesByContext(cat, subcat, sizeType){
   }
   return SIZES_SHOES;
 }
-const D_LOGIN='EasyShop39!', D_PASS='Xk#7m2@Pq9!';
+// Дефолтные данные убраны из кода — хранятся только в Firebase
 
 /* ── STATE ── */
 let products=[], STORES={'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
@@ -417,7 +417,7 @@ let unsubP=null, unsubS=null;
 /* ── CREDENTIALS ── */
 function getCreds(){
   try{ const c=localStorage.getItem('yk_creds'); if(c) return JSON.parse(c); }catch(e){}
-  return {login:D_LOGIN, pass:D_PASS};
+  return null; // данные ещё не загружены из Firebase
 }
 // ── CREDENTIALS в Firebase ──
 async function loadCredsFromFB(){
@@ -427,8 +427,14 @@ async function loadCredsFromFB(){
       const d=snap.data();
       if(d.login&&d.pass)
         localStorage.setItem('yk_creds',JSON.stringify({login:d.login,pass:d.pass}));
+    } else {
+      // Документа нет в Firebase — localStorage тоже очищаем
+      localStorage.removeItem('yk_creds');
     }
-  }catch(e){ console.warn('loadCredsFromFB:',e); }
+  }catch(e){
+    console.warn('loadCredsFromFB:',e);
+    // При ошибке сети — пробуем localStorage
+  }
 }
 async function saveCredsToFB(login,pass){
   await setDoc(doc(db,'settings','credentials'),{login,pass});
@@ -479,12 +485,24 @@ document.getElementById('loginInput').addEventListener('keydown', e=>{ if(e.key=
 document.getElementById('btnLogout').addEventListener('click', doLogout);
 
 async function doLogin(){
-  // Сначала подгружаем актуальные данные из Firebase
+  // Показываем индикатор загрузки
+  const btn=document.getElementById('btnLogin');
+  btn.textContent='Проверка...'; btn.disabled=true;
+
   await loadCredsFromFB();
-  const {login,pass}=getCreds();
+  const creds=getCreds();
   const l=document.getElementById('loginInput').value.trim();
   const p=document.getElementById('passInput').value;
-  if(l===login && p===pass){
+
+  btn.textContent='Войти'; btn.disabled=false;
+
+  if(!creds){
+    document.getElementById('loginErr').textContent='Ошибка подключения к серверу. Проверьте интернет.';
+    document.getElementById('loginErr').style.display='block';
+    return;
+  }
+
+  if(l===creds.login && p===creds.pass){
     document.getElementById('loginScreen').style.display='none';
     document.getElementById('app').style.display='block';
     sessionStorage.setItem('yk_auth','1');
