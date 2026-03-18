@@ -407,11 +407,27 @@ let unsubscribeSettings = null;
 function setFbStatus(s,t){ document.getElementById('fbDot').className='fb-dot '+s; document.getElementById('fbStatusText').textContent=t; }
 
 function startListeners(){
-  unsubscribeProducts = onSnapshot(collection(db,'products'),
-    snap=>{ products=snap.docs.map(d=>({id:d.id,...d.data()})); products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0)); setFbStatus('ok','Подключено — данные синхронизируются'); renderAll(); },
+  unsubscribeProducts = onSnapshot(
+    collection(db,'products'),
+    { includeMetadataChanges: true },
+    snap=>{
+      // Игнорируем снапшоты из локального кэша — рендерим только серверные данные
+      if(snap.metadata.fromCache) return;
+      products=snap.docs.map(d=>({id:d.id,...d.data()}));
+      products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      setFbStatus('ok','Подключено — данные синхронизируются');
+      renderAll();
+    },
     err=>{ setFbStatus('err','Ошибка: '+err.code); }
   );
-  unsubscribeSettings = onSnapshot(doc(db,'settings','stores'), snap=>{ if(snap.exists()){ STORES=snap.data(); fillAddressFields(); rebuildStoreDropdowns(); renderAll(); } });
+  unsubscribeSettings = onSnapshot(
+    doc(db,'settings','stores'),
+    { includeMetadataChanges: true },
+    snap=>{
+      if(snap.metadata.fromCache) return;
+      if(snap.exists()){ STORES=snap.data(); fillAddressFields(); rebuildStoreDropdowns(); renderAll(); }
+    }
+  );
 }
 
 function doLogin(){
