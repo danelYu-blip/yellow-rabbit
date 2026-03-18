@@ -78,8 +78,15 @@ body{font-family:'Onest',sans-serif;background:var(--bg);color:var(--tx);min-hei
 
 /* PRODUCT LIST */
 .plist{display:flex;flex-direction:column;gap:8px}
-.prow{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:12px}
+.prow{background:var(--s1);border:1px solid var(--b);border-radius:var(--r);padding:12px;display:flex;align-items:center;gap:12px;transition:border-color .2s,opacity .2s,transform .15s;cursor:default}
 .prow:hover{border-color:rgba(245,200,0,.3)}
+.prow.dragging{opacity:.4;border-color:var(--y);transform:scale(.98)}
+.prow.drag-over{border-color:var(--y);border-style:dashed;background:rgba(245,200,0,.05)}
+.drag-handle{display:flex;flex-direction:column;gap:3px;cursor:grab;padding:4px 2px;flex-shrink:0;opacity:.4;transition:opacity .2s}
+.drag-handle:hover{opacity:1}
+.drag-handle:active{cursor:grabbing}
+.drag-handle span{display:block;width:16px;height:2px;background:var(--mu);border-radius:1px}
+.sort-hint{font-size:11px;color:var(--mu);text-align:center;padding:6px;margin-bottom:8px;border:1px dashed var(--b);border-radius:var(--rs)}
 .prow-img{width:52px;height:52px;border-radius:8px;object-fit:cover;background:var(--s2);flex-shrink:0}
 .prow-ph{width:52px;height:52px;border-radius:8px;background:var(--s2);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
 .prow-info{flex:1;min-width:0}
@@ -457,7 +464,12 @@ function fbSt(cls,txt){ document.getElementById('fbDot').className='fb-dot '+cls
 function startListeners(){
   unsubP = onSnapshot(collection(db,'products'), snap=>{
     products = snap.docs.map(d=>({id:d.id,...d.data()}));
-    products.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    products.sort((a,b)=>{
+      if(a.order!=null&&b.order!=null) return a.order-b.order;
+      if(a.order!=null) return -1;
+      if(b.order!=null) return 1;
+      return (a.createdAt||0)-(b.createdAt||0);
+    });
     fbSt('ok','Подключено — синхронизируется');
     renderAll();
   }, err=>fbSt('err','Ошибка: '+err.code));
@@ -552,15 +564,80 @@ function getFiltered(){
   );
 }
 
+// ── DRAG & DROP ──
+let dragSrcId = null;
+
+function initDragDrop(list){
+  const rows = list.querySelectorAll('.prow[data-id]');
+  rows.forEach(row=>{
+    const handle = row.querySelector('.drag-handle');
+    handle.addEventListener('mousedown', ()=>{ row.draggable=true; });
+    row.addEventListener('dragend', ()=>{ row.draggable=false; row.classList.remove('dragging'); list.querySelectorAll('.prow').forEach(r=>r.classList.remove('drag-over')); });
+    row.addEventListener('dragstart', e=>{
+      dragSrcId=row.dataset.id; row.classList.add('dragging'); e.dataTransfer.effectAllowed='move';
+    });
+    row.addEventListener('dragover', e=>{
+      e.preventDefault(); e.dataTransfer.dropEffect='move';
+      list.querySelectorAll('.prow').forEach(r=>r.classList.remove('drag-over'));
+      if(row.dataset.id!==dragSrcId) row.classList.add('drag-over');
+    });
+    row.addEventListener('drop', async e=>{
+      e.preventDefault(); row.classList.remove('drag-over');
+      if(!dragSrcId||dragSrcId===row.dataset.id) return;
+      await swapProducts(dragSrcId, row.dataset.id);
+      dragSrcId=null;
+    });
+  });
+
+  // Touch support
+  let tEl=null;
+  rows.forEach(row=>{
+    row.querySelector('.drag-handle').addEventListener('touchstart', ()=>{ tEl=row; row.classList.add('dragging'); },{passive:true});
+  });
+  list.addEventListener('touchmove', e=>{
+    if(!tEl) return; e.preventDefault();
+    const t=e.touches[0], el=document.elementFromPoint(t.clientX,t.clientY);
+    const target=el?.closest('.prow[data-id]');
+    list.querySelectorAll('.prow').forEach(r=>r.classList.remove('drag-over'));
+    if(target&&target!==tEl) target.classList.add('drag-over');
+  },{passive:false});
+  list.addEventListener('touchend', async e=>{
+    if(!tEl) return;
+    const t=e.changedTouches[0], el=document.elementFromPoint(t.clientX,t.clientY);
+    const target=el?.closest('.prow[data-id]');
+    tEl.classList.remove('dragging'); list.querySelectorAll('.prow').forEach(r=>r.classList.remove('drag-over'));
+    if(target&&target!==tEl) await swapProducts(tEl.dataset.id, target.dataset.id);
+    tEl=null;
+  });
+}
+
+async function swapProducts(idA, idB){
+  const pA=products.find(p=>p.id===idA);
+  const pB=products.find(p=>p.id===idB);
+  if(!pA||!pB) return;
+  // Назначаем порядок если его ещё нет
+  products.forEach((p,i)=>{ if(p.order==null) p.order=i; });
+  const tmp=pA.order; pA.order=pB.order; pB.order=tmp;
+  products.sort((a,b)=>(a.order??0)-(b.order??0));
+  renderProducts();
+  await Promise.all([
+    setDoc(doc(db,'products',String(pA.id)),{...pA}),
+    setDoc(doc(db,'products',String(pB.id)),{...pB})
+  ]);
+}
+
 function renderProducts(){
   renderStats();
   const list=document.getElementById('productList');
   const f=getFiltered();
   if(!f.length){ list.innerHTML=`<div class="empty"><div class="empty-ic">🐇</div><div class="empty-t">Нет товаров</div><div class="empty-s">Добавьте первый товар</div></div>`; return; }
-  list.innerHTML=f.map(p=>{
+  const hasFilter=document.getElementById('searchInput').value||document.getElementById('storeFilter').value!=='all';
+  list.innerHTML=(hasFilter ? '' : '<div class="sort-hint">☰ Перетащите за полоску слева чтобы изменить порядок</div>')+
+  f.map(p=>{
     const sc=(!p.sizes||!p.sizes.length)?'color:var(--re)':p.sizes.length<=3?'color:var(--y)':'color:var(--gr)';
     const sub=p.subcat?` · ${subLabel(p.subcat)}`:'';
-    return `<div class="prow">
+    return `<div class="prow" data-id="${p.id}">
+      <div class="drag-handle" title="Перетащить"><span></span><span></span><span></span></div>
       ${p.img?`<img class="prow-img" src="${p.img}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
       <div class="prow-ph" style="${p.img?'display:none':''}">${ICON[p.cat]||'📦'}</div>
       <div class="prow-info">
@@ -578,20 +655,12 @@ function renderProducts(){
       </div>
     </div>`;
   }).join('');
-
-  // Вешаем события через делегирование — нет onclick в строках
   list.querySelectorAll('[data-edit]').forEach(btn=>btn.addEventListener('click',()=>openEdit(btn.dataset.edit)));
   list.querySelectorAll('[data-del]').forEach(btn=>btn.addEventListener('click',()=>showConfirm(
     'Удалить товар?','Товар будет удалён из каталога',
-    ()=>{
-      const id=String(btn.dataset.del);
-      // Сразу убираем из локального массива — UI не мигает
-      products=products.filter(p=>p.id!==id);
-      renderAll();
-      // Затем удаляем в Firebase
-      return deleteDoc(doc(db,'products',id));
-    }
+    ()=>{ const id=String(btn.dataset.del); products=products.filter(p=>p.id!==id); renderAll(); return deleteDoc(doc(db,'products',id)); }
   )));
+  if(!hasFilter) initDragDrop(list);
 }
 
 function renderStock(){
