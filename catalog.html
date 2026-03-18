@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<title>Жёлтый Кролик — Каталог</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Onest:wght@300;400;500;600;700&display=swap');
+  :root{--yellow:#F5C800;--black:#0A0A0A;--surface:#141414;--surface2:#1E1E1E;--border:#2A2A2A;--border-y:rgba(245,200,0,0.25);--text:#F5F5F0;--muted:#777;--danger:#FF4444;--success:#3DDC84;--radius:12px;--radius-sm:8px}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  body{font-family:'Onest',sans-serif;background:var(--black);color:var(--text);min-height:100vh;overflow-x:hidden;font-size:14px}
+
+  :root{ --tg-safe-top: 0px; }
+  body{ padding-top: var(--tg-safe-top); }
+  .header{background:var(--black);border-bottom:2px solid var(--yellow);padding:12px 14px 10px;position:sticky;top:0;z-index:100}
+  .header-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:11px}
+  .brand{display:flex;align-items:center;gap:10px}
+  .logo-box{width:40px;height:40px;background:var(--yellow);border-radius:8px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+  .brand-name{font-family:'Bebas Neue',sans-serif;font-size:22px;letter-spacing:1px;color:var(--yellow);line-height:1}
+  .brand-sub{font-size:10px;color:var(--muted);letter-spacing:.5px;font-weight:500;text-transform:uppercase;margin-top:2px}
+
+  .tabs{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:1px}
+  .tabs::-webkit-scrollbar{display:none}
+  .tab{flex-shrink:0;padding:5px 14px;border-radius:20px;background:transparent;border:1px solid var(--border);color:var(--muted);font-family:'Onest',sans-serif;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;white-space:nowrap}
+  .tab.active{background:var(--yellow);border-color:var(--yellow);color:#000}
+
+  .store-bar{padding:9px 14px;background:var(--surface);border-bottom:1px solid var(--border)}
+  .select-wrap{position:relative}
+  .select-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+  .store-select{width:100%;background:var(--surface2);border:1px solid var(--border-y);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;font-weight:500;padding:9px 12px 9px 34px;appearance:none;-webkit-appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='7' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23F5C800' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;cursor:pointer;outline:none}
+  .store-select:focus{border-color:var(--yellow)}
+  .store-select option{background:#1E1E1E}
+
+  .search-bar{padding:9px 14px;background:var(--black)}
+  .search-wrap{position:relative}
+  .search-icon{position:absolute;left:11px;top:50%;transform:translateY(-50%);font-size:14px;pointer-events:none}
+  .search-input{width:100%;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);color:var(--text);font-family:'Onest',sans-serif;font-size:13px;padding:9px 12px 9px 34px;outline:none;transition:border-color .2s}
+  .search-input:focus{border-color:var(--yellow)}
+  .search-input::placeholder{color:var(--muted)}
+
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:8px 10px 40px}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;animation:fadeIn .3s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+  .card:active{transform:scale(.98)}
+  .card-img{width:100%;aspect-ratio:1;object-fit:cover;background:var(--surface2);display:block}
+  .card-img-placeholder{width:100%;aspect-ratio:1;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:32px}
+  .card-top-line{height:2px;background:var(--yellow)}
+  .card-body{padding:7px 8px 7px}
+  .card-category{font-size:9px;color:var(--yellow);text-transform:uppercase;letter-spacing:.5px;font-weight:700;margin-bottom:3px}
+  .card-name{font-weight:600;font-size:12px;line-height:1.3;margin-bottom:4px;color:var(--text);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+  .card-footer{display:flex;align-items:center;justify-content:space-between;gap:4px}
+  .card-price{font-family:'Bebas Neue',sans-serif;font-size:16px;letter-spacing:.5px;color:var(--yellow)}
+  .card-store{font-size:8px;color:var(--muted);margin-top:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  /* SIZE CHIPS — catalog */
+  .sizes-row{display:flex;flex-wrap:wrap;gap:3px;margin-top:4px}
+  .sz{padding:2px 5px;border-radius:4px;font-size:9px;font-weight:700;background:var(--surface2);border:1px solid var(--border);color:var(--muted);line-height:1.4}
+  .sz.in{background:rgba(245,200,0,0.15);border-color:rgba(245,200,0,0.4);color:var(--yellow)}
+  .no-sizes{font-size:9px;color:var(--danger);font-weight:700;margin-top:4px}
+
+  /* Loading */
+  .loading{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+  .loading-icon{font-size:40px;margin-bottom:14px;animation:spin 1.5s linear infinite;display:inline-block}
+  @keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--muted);grid-column:1/-1}
+  .empty-icon{font-size:52px;margin-bottom:14px}
+  .empty-text{font-family:'Bebas Neue',sans-serif;font-size:20px;color:var(--text);margin-bottom:6px;letter-spacing:1px}
+  .empty-sub{font-size:13px}
+
+  ::-webkit-scrollbar{width:3px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-top">
+    <div class="brand">
+      <div class="logo-box">
+        <svg width="28" height="28" viewBox="0 0 32 32" fill="none"><ellipse cx="11.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="20.5" cy="7" rx="2" ry="5" fill="#111"/><ellipse cx="16" cy="13.5" rx="6" ry="5.5" fill="#111"/><ellipse cx="16" cy="22" rx="7.5" ry="6.5" fill="#111"/><circle cx="23" cy="24" r="2.2" fill="#111"/><circle cx="14" cy="13" r="0.9" fill="#F5C800"/></svg>
+      </div>
+      <div><div class="brand-name">Жёлтый Кролик</div><div class="brand-sub">Обувь и одежда</div></div>
+    </div>
+  </div>
+  <div class="tabs" id="catTabs">
+    <button class="tab active" data-cat="all">Всё</button>
+    <button class="tab" data-cat="shoes">Обувь</button>
+    <button class="tab" data-cat="clothes">Одежда</button>
+    <button class="tab" data-cat="accessories">Аксессуары</button>
+  </div>
+</div>
+
+<div class="store-bar">
+  <div class="select-wrap">
+    <span class="select-icon">📍</span>
+    <select class="store-select" id="storeSelect">
+      <option value="all">Все магазины</option>
+    </select>
+  </div>
+</div>
+
+<div class="search-bar">
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input class="search-input" id="searchInput" placeholder="Поиск по названию...">
+  </div>
+</div>
+
+<div class="grid" id="productGrid">
+  <div class="loading"><div class="loading-icon">🐇</div><div style="font-size:14px">Загрузка каталога...</div></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getFirestore, collection, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAt-8mDoKj4sbd2z4-txsjuLNLILUZ1SAE",
+  authDomain: "yellow-rabbit-shop.firebaseapp.com",
+  projectId: "yellow-rabbit-shop",
+  storageBucket: "yellow-rabbit-shop.firebasestorage.app",
+  messagingSenderId: "470956648612",
+  appId: "1:470956648612:web:8651c509a4e3c28a969e31"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const CAT_LABELS = {shoes:'Обувь',clothes:'Одежда',accessories:'Аксессуары'};
+const CAT_ICONS  = {shoes:'👟',clothes:'👕',accessories:'👜'};
+
+let products = [];
+let STORES = {'1':'ул. Ленина, 12','2':'пр. Мира, 45','3':'ТЦ «Центральный», 3 этаж','4':'ул. Садовая, 8'};
+let currentCat = 'all';
+let currentStore = 'all';
+
+// Real-time listener — products
+onSnapshot(collection(db,'products'), snap => {
+  products = snap.docs.map(d => ({id:d.id, ...d.data()}));
+  products.sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+  render();
+});
+
+// Real-time listener — store addresses
+onSnapshot(doc(db,'settings','stores'), snap => {
+  if(snap.exists()){
+    STORES = snap.data();
+    buildStoreSelect();
+    render();
+  }
+});
+
+function buildStoreSelect(){
+  const sel = document.getElementById('storeSelect');
+  const prev = sel.value;
+  sel.innerHTML = '<option value="all">Все магазины</option>' +
+    Object.entries(STORES).map(([k,v])=>`<option value="${k}">${v}</option>`).join('');
+  sel.value = prev;
+}
+
+function filterProducts(){
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  return products.filter(p=>
+    (currentCat==='all'||p.cat===currentCat) &&
+    (currentStore==='all'||p.store===currentStore) &&
+    (!q||p.name.toLowerCase().includes(q)||(p.desc||'').toLowerCase().includes(q))
+  );
+}
+
+const ALL_SIZES=[36,37,38,39,40,41,42,43,44,45,46];
+function sizesHtml(sizes){
+  if(!sizes||sizes.length===0) return '<div class="no-sizes">Нет</div>';
+  // Показываем только доступные размеры
+  return '<div class="sizes-row">'+sizes.map(s=>
+    `<span class="sz in">${s}</span>`
+  ).join('')+'</div>';
+}
+
+function render(){
+  const grid = document.getElementById('productGrid');
+  const filtered = filterProducts();
+
+  if(!filtered.length && products.length===0){
+    grid.innerHTML=`<div class="empty"><div class="empty-icon">🐇</div><div class="empty-text">Каталог пуст</div><div class="empty-sub">Скоро здесь появятся товары</div></div>`;
+    return;
+  }
+  if(!filtered.length){
+    grid.innerHTML=`<div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Ничего не найдено</div><div class="empty-sub">Попробуйте изменить фильтр</div></div>`;
+    return;
+  }
+
+  grid.innerHTML = filtered.map(p=>`
+    <div class="card">
+      <div class="card-top-line"></div>
+      ${p.img?`<img class="card-img" src="${p.img}" alt="${p.name}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">`:``}
+      <div class="card-img-placeholder" style="${p.img?'display:none':''}">${CAT_ICONS[p.cat]||'📦'}</div>
+      <div class="card-body">
+        <div class="card-category">${CAT_LABELS[p.cat]||p.cat}</div>
+        <div class="card-name">${p.name}</div>
+        <div class="card-price" style="font-family:'Bebas Neue',sans-serif;font-size:14px;letter-spacing:.3px;color:var(--yellow);margin-bottom:2px">${Number(p.price).toLocaleString('ru')} ₽</div>
+        ${sizesHtml(p.sizes||[])}
+        <div class="card-store">📍 ${STORES[p.store]||''}</div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Telegram WebApp init
+if(window.Telegram && window.Telegram.WebApp){
+  const tg = window.Telegram.WebApp;
+
+  // Расширяем на весь экран
+  tg.expand();
+  try { tg.requestFullscreen(); } catch(e){}
+
+  // Цвет системной шапки — чёрный под наш дизайн
+  try { tg.setHeaderColor('#0A0A0A'); } catch(e){}
+  try { tg.setBackgroundColor('#0A0A0A'); } catch(e){}
+
+  // Отступ = системный inset (выемка/камера) + панель Telegram (кнопка Закрыть)
+  function applyInset(){
+    const safe    = tg.safeAreaInset        || {};  // выемка устройства
+    const content = tg.contentSafeAreaInset || {};  // панель Telegram с кнопкой
+    const top = (safe.top || 0) + (content.top || 0);
+    document.documentElement.style.setProperty('--tg-safe-top', top + 'px');
+  }
+  applyInset();
+  tg.onEvent('safeAreaChanged',        applyInset);
+  tg.onEvent('contentSafeAreaChanged', applyInset);
+  tg.onEvent('viewportChanged',        applyInset);
+
+  tg.ready();
+}
+
+document.getElementById('catTabs').addEventListener('click',e=>{
+  if(!e.target.classList.contains('tab')) return;
+  currentCat=e.target.dataset.cat;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('active',t.dataset.cat===currentCat));
+  render();
+});
+
+document.getElementById('storeSelect').addEventListener('change',e=>{ currentStore=e.target.value; render(); });
+document.getElementById('searchInput').addEventListener('input',render);
+</script>
+</body>
+</html>
