@@ -736,6 +736,27 @@ if(sessionStorage.getItem('yk_auth')==='1'){
 } else {
   setFbStatus('pulse','Ожидание входа...');
 }
+
+// ── CONFIRM DIALOG ──
+let _confirmCb = null;
+
+function askConfirm(title, text, cb){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmText').textContent  = text;
+  _confirmCb = cb;
+  document.getElementById('confirmOverlay').classList.add('open');
+}
+function closeConfirm(){
+  document.getElementById('confirmOverlay').classList.remove('open');
+  _confirmCb = null;
+}
+document.getElementById('confirmYes').addEventListener('click', ()=>{
+  const cb = _confirmCb;   // сохраняем ДО закрытия
+  closeConfirm();
+  if(cb) cb();
+});
+window.askConfirm   = askConfirm;
+window.closeConfirm = closeConfirm;
 </script>
 <!-- Confirm dialog -->
 <div class="confirm-overlay" id="confirmOverlay">
